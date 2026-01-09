@@ -1,4 +1,6 @@
 import type { FC, ReactNode } from "react";
+import Header from "../Header/Header";
+import "./main-layout.style.css";
 
 type MainLayoutProps = {
   children: ReactNode;
@@ -6,9 +8,9 @@ type MainLayoutProps = {
 
 const MainLayout: FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div>
-      <h1>woodle</h1>
-      {children}
+    <div className="main-layout">
+      <Header />
+      <main>{children}</main>
     </div>
   );
 };
