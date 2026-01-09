@@ -16,19 +16,6 @@ html {
     height: 100%;
   }
 
-  .theme {
-    background-color: light-dark(var(--cream-100), var(--teal-800));
-    color: light-dark(var(--teal-800), var(--cream-100));
-
-    &.light {
-      color-scheme: light;
-    }
-
-    &.dark {
-      color-scheme: dark;
-    }
-  }
-
   h1,
   h2,
   h3,
