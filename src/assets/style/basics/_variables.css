@@ -1,0 +1,9 @@
+:root {
+  /* Sizes */
+  --header-height: 48px;
+
+  /* Colors */
+  --white: #fff;
+  --gray-100: rgb(223, 223, 223);
+  --black: #000;
+}

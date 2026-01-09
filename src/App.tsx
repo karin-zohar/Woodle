@@ -1,12 +1,12 @@
+import MainLayout from "./components/MainLayout/MainLayout";
+import HomePage from "./pages/HomePage";
+
 function App() {
-
   return (
-    <>
-    <h1>woodle</h1>
-    <h1>hello world</h1>
-
-    </>
-  )
+    <MainLayout>
+      <HomePage guessAmount={0} />
+    </MainLayout>
+  );
 }
 
-export default App
+export default App;

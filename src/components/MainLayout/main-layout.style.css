@@ -1,0 +1,16 @@
+.main-layout {
+  overflow: hidden;
+  height: 100vh;
+  main {
+    max-height: 100%;
+    overflow: auto;
+    display: grid;
+    grid-template-columns: minmax(20px, 1fr) minmax(250px, 400px) minmax(
+        20px,
+        1fr
+      );
+    > * {
+      grid-column: 2;
+    }
+  }
+}
