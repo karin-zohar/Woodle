@@ -4,7 +4,6 @@ import HomePage from "./pages/HomePage";
 function App() {
   return (
     <MainLayout>
-      <h3>hello world</h3>
       <HomePage guessAmount={0} />
     </MainLayout>
   );

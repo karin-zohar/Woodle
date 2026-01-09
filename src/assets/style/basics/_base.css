@@ -5,7 +5,7 @@
 html {
   height: 100vh;
   background-color: var(--white);
-  font-family: "Outfit", "Assistant", Arial, sans-serif;
+  font-family: "RobotoMono", Arial, sans-serif;
   font-size: 16px;
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -36,6 +36,7 @@ html {
   h5,
   h6 {
     &.ant-typography {
+      font-family: "YatraOne";
       line-height: 1.1em;
       margin-block: 10px;
       letter-spacing: 0.08em;
