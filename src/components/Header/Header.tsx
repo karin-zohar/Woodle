@@ -4,7 +4,7 @@ import "./header.style.css";
 type HeaderProps = {};
 
 const Header: FC<HeaderProps> = ({}) => {
-  return <header>nav</header>;
+  return <header className="wood-grain">nav</header>;
 };
 
 export default Header;

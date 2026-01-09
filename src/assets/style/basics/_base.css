@@ -4,7 +4,8 @@
 
 html {
   height: 100vh;
-  background-color: var(--white);
+  background-color: var(--linen);
+  color: var(--espresso);
   font-family: "RobotoMono", Arial, sans-serif;
   font-size: 16px;
   scrollbar-width: none;
@@ -24,6 +25,7 @@ html {
   h6 {
     &.ant-typography {
       font-family: "YatraOne";
+      color: var(--espresso);
       line-height: 1.1em;
       margin-block: 10px;
       letter-spacing: 0.08em;

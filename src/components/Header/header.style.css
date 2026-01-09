@@ -1,6 +1,6 @@
 header {
+  box-shadow: var(--box-shadow);
   width: 100%;
   height: var(--header-height);
   padding-inline: 16px;
-  border-bottom: 1px solid var(--gray-100);
 }

@@ -6,4 +6,13 @@
   --white: #fff;
   --gray-100: rgb(223, 223, 223);
   --black: #000;
+
+  --linen: #f3e9dcff;
+  --golden-chestnut: #c08552ff;
+  --espresso: #5e3023ff;
+  --toffee-brown: #895737ff;
+  --desert-sand: #dab49dff;
+
+  /* Styles */
+  --box-shadow: 5px 5px 9px 1px #c0c0c0;
 }
