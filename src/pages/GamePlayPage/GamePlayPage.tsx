@@ -1,11 +1,10 @@
-import { useState, type FC } from "react";
+import { useState } from "react";
 import GameBoard from "./components/GameBoard/GameBoard";
 import type { TileRowType, TileType } from "./GamePlayPage.type";
 import Keyboard from "./components/Keyboard/Keyboard";
+import "./game-play-page.style.css";
 
-type GamePlayPageProps = {};
-
-const GamePlayPage: FC<GamePlayPageProps> = ({}) => {
+const GamePlayPage = () => {
   const emptyTile: TileType = { status: "empty", content: "" };
   const emptyRow: TileRowType = {
     tiles: Array.from({ length: 5 }, () => emptyTile),
@@ -40,7 +39,7 @@ const GamePlayPage: FC<GamePlayPageProps> = ({}) => {
   };
 
   return (
-    <div>
+    <div className="game-play-page">
       <GameBoard rows={board} />
       <Keyboard updateTile={updateTile} />
     </div>

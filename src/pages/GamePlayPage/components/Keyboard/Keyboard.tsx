@@ -13,7 +13,11 @@ type KeyboardProps = {
 const Keyboard: FC<KeyboardProps> = ({ updateTile }) => {
   // TODO: replace with real function
   const tempUpdate = () => {
-    updateTile(1, 1, { status: "green", content: "B" });
+    updateTile(0, 0, { status: "green", content: "A" });
+    updateTile(0, 1, { status: "yellow", content: "R" });
+    updateTile(0, 2, { status: "gray", content: "I" });
+    updateTile(0, 3, { status: "green", content: "S" });
+    updateTile(0, 4, { status: "yellow", content: "E" });
   };
 
   return (
