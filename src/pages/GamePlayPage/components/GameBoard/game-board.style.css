@@ -1,0 +1,32 @@
+.game-board {
+  height: 370px;
+  width: 320px;
+  border-radius: 20px;
+  box-shadow: var(--box-shadow);
+  border: 3px solid var(--golden-chestnut);
+  padding: 10px;
+  .rows-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .tile-row {
+    display: flex;
+    justify-content: space-between;
+
+    .tile {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      background-color: var(--desert-sand);
+      border: 2px solid var(--toffee-brown);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 36px;
+    }
+  }
+}
