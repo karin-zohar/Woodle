@@ -21,12 +21,29 @@
       width: 52px;
       height: 52px;
       border-radius: 10px;
-      background-color: var(--desert-sand);
       border: 2px solid var(--toffee-brown);
+      color: var(--white);
       display: flex;
       justify-content: center;
       align-items: center;
       font-size: 36px;
+      font-family: AllertaStencil;
+      background-color: var(--desert-sand);
+
+      &.editing {
+        color: var(--espresso);
+        border-color: var(--espresso);
+      }
+
+      &.gray {
+        background-color: var(--tile-gray);
+      }
+      &.yellow {
+        background-color: var(--tile-yellow);
+      }
+      &.green {
+        background-color: var(--tile-green);
+      }
     }
   }
 }
