@@ -15,7 +15,18 @@ const routes: RouteObject[] = [
     path: "/play",
     element: <GamePlayPage />,
   },
-  //   TODO: add 404 page
+  {
+    path: "/settings",
+    element: <span>settings</span>,
+  },
+  {
+    path: "/how-to-play",
+    element: <span>how-to-play</span>,
+  },
+  {
+    path: "/404",
+    element: <span>404</span>,
+  },
 ];
 
 export default routes;

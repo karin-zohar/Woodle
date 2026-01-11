@@ -1,5 +1,6 @@
 import { Button, Typography } from "antd";
 import type { FC } from "react";
+import { useNavigate } from "react-router-dom";
 
 type HomePageProps = {
   guessAmount: number;
@@ -10,6 +11,7 @@ type GameStatus = "notStarted" | "inProgress" | "finished";
 const MAX_GUESS_AMOUNT = 6;
 
 const HomePage: FC<HomePageProps> = ({ guessAmount = 0 }) => {
+  const navigate = useNavigate();
   const { Title } = Typography;
   const gameStatus: GameStatus =
     guessAmount > 0
@@ -47,7 +49,7 @@ const HomePage: FC<HomePageProps> = ({ guessAmount = 0 }) => {
     <div className="home-page">
       <Title level={1}>{header}</Title>
       <Title level={2}>{subheader}</Title>
-      <Button>{buttonContent}</Button>
+      <Button onClick={() => navigate("/play")}>{buttonContent}</Button>
     </div>
   );
 };

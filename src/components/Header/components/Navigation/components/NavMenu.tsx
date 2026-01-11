@@ -19,16 +19,15 @@ const NavMenu: FC<NavMenuProps> = ({ layout, closeDrawer }) => {
       label: "Home",
       key: "/",
       icon: <HomeIcon />,
-      onClick: () => console.log("home clicked"),
     },
     {
       label: "Settings",
-      key: "settings",
+      key: "/settings",
       icon: <SettingsIcon />,
     },
     {
       label: "How To Play",
-      key: "how-to-play",
+      key: "/how-to-play",
       icon: <QuestionIcon />,
     },
   ];
