@@ -35,7 +35,6 @@ const NavMenu: FC<NavMenuProps> = ({ layout, closeDrawer }) => {
   const handleItemClick: MenuProps["onClick"] = ({ key }) => {
     navigate(key);
     closeDrawer?.();
-    console.log("location.pathname : ", location.pathname);
   };
 
   return (
