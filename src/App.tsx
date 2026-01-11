@@ -1,13 +1,18 @@
+import { BrowserRouter as Router, useRoutes } from "react-router";
 import MainLayout from "./components/MainLayout/MainLayout";
-import GamePlayPage from "./pages/GamePlayPage/GamePlayPage";
-// import HomePage from "./pages/HomePage";
+import routes from "./router/routes";
+
+const AppRoutes = () => {
+  return useRoutes(routes);
+};
 
 function App() {
   return (
-    <MainLayout>
-      {/* <HomePage guessAmount={0} /> */}
-      <GamePlayPage />
-    </MainLayout>
+    <Router>
+      <MainLayout>
+        <AppRoutes />
+      </MainLayout>
+    </Router>
   );
 }
 
