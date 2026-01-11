@@ -15,8 +15,6 @@ const GamePlayPage = () => {
   const [board, setBoard] = useState<TileRowType[]>(emptyBoard);
   const [guesses, setGuesses] = useState<string[]>([]);
   const activeRowIdx = guesses.length;
-  console.log("guesses:", guesses);
-  console.log("activeRowIdx:", activeRowIdx);
 
   const updateTile = (
     rowId: number,
