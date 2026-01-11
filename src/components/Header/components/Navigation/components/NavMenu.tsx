@@ -1,9 +1,5 @@
 import type { FC } from "react";
-import {
-  HomeIcon,
-  QuestionIcon,
-  SettingsIcon,
-} from "../../../../../../libs/ui/icons";
+import { HomeIcon, QuestionIcon, SettingsIcon } from "@/libs/ui/icons";
 import { Menu, type MenuProps } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 

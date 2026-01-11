@@ -3,8 +3,13 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ],
-  "compilerOptions": {
-    "verbatimModuleSyntax": true
-  }
+  ]
+  // "compilerOptions": {
+  //   "verbatimModuleSyntax": true,
+  //   "baseUrl": ".",
+  //   "paths": {
+  //     "@/*": ["src/*"],
+  //     "@/libs/": ["./libs/*"]
+  //   }
+  // }
 }
