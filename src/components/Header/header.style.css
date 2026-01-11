@@ -29,6 +29,17 @@ header {
   background-color: var(--linen);
   .ant-drawer-header {
     border: none;
+    button.ant-drawer-close {
+      height: 48px;
+      width: 48px;
+      font-size: 48px;
+      color: var(--espresso);
+
+      &:hover {
+        background-color: transparent;
+        color: var(--golden-chestnut);
+      }
+    }
   }
 
   .ant-menu {
