@@ -1,9 +1,9 @@
 import { lazy } from "react";
 import { type RouteObject } from "react-router-dom";
 
-const HomePage = lazy(async () => await import("../pages/HomePage"));
+const HomePage = lazy(async () => await import("@/pages/HomePage"));
 const GamePlayPage = lazy(
-  async () => await import("../pages/GamePlayPage/GamePlayPage")
+  async () => await import("@/pages/GamePlayPage/GamePlayPage")
 );
 
 const routes: RouteObject[] = [

@@ -2,7 +2,7 @@ import { type FC } from "react";
 import { Button, Drawer } from "antd";
 import NavContent from "./NavContent";
 import clsx from "clsx";
-import { CloseIcon, MenuIcon } from "../../../../../../libs/ui/icons/index";
+import { CloseIcon, MenuIcon } from "@/libs/ui/icons/index";
 
 type NavDrawerProps = {
   open: boolean;
