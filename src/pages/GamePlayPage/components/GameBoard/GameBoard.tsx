@@ -8,7 +8,7 @@ const GameBoard: FC<GameBoardProps> = ({ rows }) => {
     <div className="game-board wood-grain">
       <div className="rows-container">
         {rows.map((row) => (
-          <TileRow tiles={row.tiles} isActive={row.isActive} />
+          <TileRow tiles={row.tiles} />
         ))}
       </div>
     </div>

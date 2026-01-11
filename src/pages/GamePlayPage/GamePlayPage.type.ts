@@ -5,7 +5,6 @@ export type TileType = {
 
 export type TileRowType = {
   tiles: TileType[];
-  isActive: boolean;
 };
 
 export type GameBoardProps = {
