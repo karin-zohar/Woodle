@@ -13,12 +13,15 @@ header {
     display: flex;
     align-items: center;
     .ant-btn.open-nav-drawer-button {
+      &.drawer-open .ant-btn-icon {
+        color: var(--toffee-brown);
+      }
       .ant-btn-icon {
         transition: 0.1s ease-in-out;
         font-size: 48px;
         color: var(--espresso);
         &:hover {
-          color: var(--linen);
+          color: var(--toffee-brown);
         }
       }
     }
@@ -69,24 +72,24 @@ header {
   li.ant-menu-item {
     padding-block: 14px;
     padding-inline: 18px;
-    background-color: var(--desert-sand);
     height: 24px;
     display: flex;
     align-items: center;
-    border-radius: 10px;
     border: 2px solid var(--espresso);
-    font-weight: 700;
+    border-radius: 10px;
+    background-color: var(--desert-sand);
     color: var(--espresso);
+    font-weight: 700;
+    transition: 0.5s;
     &::before,
     &::after {
       display: none;
     }
 
-    transition: 0.5s;
     &:hover {
       color: var(--espresso);
       background-color: var(--desert-sand);
-      transform: translateY(5px) rotate(6deg);
+      transform: translateY(5px) scale(110%) rotate(6deg);
     }
 
     &.ant-menu-item-selected {

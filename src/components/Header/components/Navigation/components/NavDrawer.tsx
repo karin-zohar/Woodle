@@ -24,7 +24,7 @@ const NavDrawer: FC<NavDrawerProps> = ({ open, onOpen, onClose }) => {
         />
       </div>
       <Drawer
-        className={clsx("nav-drawer ")}
+        className={clsx("nav-drawer")}
         open={open}
         onClose={onClose}
         closeIcon={<CloseIcon />}
