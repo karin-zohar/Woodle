@@ -1,6 +1,6 @@
 .wood-grain {
   background-color: var(--golden-chestnut);
   background-image: url(../../img/wood-grain.svg);
-  background-size: 30%;
+  background-size: 300px;
   background-blend-mode: color-burn;
 }

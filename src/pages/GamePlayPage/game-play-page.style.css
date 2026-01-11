@@ -1,0 +1,7 @@
+.game-play-page {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
