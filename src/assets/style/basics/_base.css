@@ -75,8 +75,13 @@ body {
   }
 
   .ant-switch {
-    border: 2px solid light-dark(var(--toffee-brown), var(--white));
+    border: 2px solid light-dark(var(--toffee-brown), var(--linen));
     box-shadow: var(--box-shadow);
+    &:disabled {
+      background-color: light-dark(var(--gray-500), var(--gray-400));
+      border-color: var(--gray-600);
+    }
+
     .ant-switch-handle {
       transform: scale(50%);
       margin-block: -2px;
@@ -89,6 +94,7 @@ body {
       .ant-switch-handle {
         transform: scale(80%);
       }
+
       &:hover:not(.ant-switch-disabled) {
         transform: rotate(-25deg);
         background-color: var(--tile-green);
