@@ -5,6 +5,9 @@ const HomePage = lazy(async () => await import("@/pages/HomePage"));
 const GamePlayPage = lazy(
   async () => await import("@/pages/GamePlayPage/GamePlayPage")
 );
+const SettingsPage = lazy(
+  async () => await import("@/pages/SettingsPage/SettingsPage")
+);
 
 const routes: RouteObject[] = [
   {
@@ -17,7 +20,7 @@ const routes: RouteObject[] = [
   },
   {
     path: "/settings",
-    element: <span>settings</span>,
+    element: <SettingsPage />,
   },
   {
     path: "/how-to-play",

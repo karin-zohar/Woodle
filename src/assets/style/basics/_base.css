@@ -7,6 +7,20 @@ html {
   background-color: var(--linen);
   color: var(--espresso);
   font-family: "RobotoMono", Arial, sans-serif;
+
+  .theme {
+    background-color: light-dark(var(--linen), var(--espresso));
+    color: light-dark(var(--espresso), var(--linen));
+
+    &.light {
+      color-scheme: light;
+    }
+
+    &.dark {
+      color-scheme: dark;
+    }
+  }
+
   font-size: 16px;
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -25,7 +39,7 @@ html {
   h6 {
     &.ant-typography {
       font-family: "YatraOne";
-      color: var(--espresso);
+      color: inherit;
       line-height: 1.1em;
       margin-block: 10px;
       letter-spacing: 0.08em;
@@ -58,5 +72,36 @@ body {
   li,
   ul {
     list-style: none;
+  }
+
+  .ant-switch {
+    border: 2px solid light-dark(var(--toffee-brown), var(--linen));
+    box-shadow: var(--box-shadow);
+    &:disabled {
+      background-color: light-dark(var(--gray-500), var(--gray-400));
+      border-color: var(--gray-600);
+    }
+
+    .ant-switch-handle {
+      transform: scale(50%);
+      margin-block: -2px;
+    }
+    &:hover:not(.ant-switch-disabled) {
+      transform: rotate(25deg);
+    }
+    &.ant-switch-checked {
+      background-color: var(--tile-green);
+      .ant-switch-handle {
+        transform: scale(80%);
+      }
+
+      &:hover:not(.ant-switch-disabled) {
+        transform: rotate(-25deg);
+        background-color: var(--tile-green);
+        .ant-switch-handle {
+          transform: scale(70%);
+        }
+      }
+    }
   }
 }

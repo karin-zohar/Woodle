@@ -5,9 +5,13 @@
   /* Colors */
   --white: #fff;
   --gray-100: rgb(223, 223, 223);
+  --gray-400: #929698;
+  --gray-500: #787c7e;
+  --gray-600: #525557;
+  --shadow: #00000058;
   --black: #000;
 
-  --tile-gray: #787c7e;
+  --tile-gray: var(--gray-500);
   --tile-yellow: #c9b458;
   --tile-green: #6aaa64;
   --linen: #f3e9dcff;
@@ -17,5 +21,5 @@
   --desert-sand: #dab49dff;
 
   /* Styles */
-  --box-shadow: 5px 5px 9px 1px #c0c0c0;
+  --box-shadow: 5px 5px 9px 1px var(--shadow);
 }
