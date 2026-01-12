@@ -73,4 +73,29 @@ body {
   ul {
     list-style: none;
   }
+
+  .ant-switch {
+    border: 2px solid light-dark(var(--toffee-brown), var(--white));
+    box-shadow: var(--box-shadow);
+    .ant-switch-handle {
+      transform: scale(50%);
+      margin-block: -2px;
+    }
+    &:hover:not(.ant-switch-disabled) {
+      transform: rotate(25deg);
+    }
+    &.ant-switch-checked {
+      background-color: var(--tile-green);
+      .ant-switch-handle {
+        transform: scale(80%);
+      }
+      &:hover:not(.ant-switch-disabled) {
+        transform: rotate(-25deg);
+        background-color: var(--tile-green);
+        .ant-switch-handle {
+          transform: scale(70%);
+        }
+      }
+    }
+  }
 }

@@ -28,7 +28,7 @@
         color: var(--white);
         font-size: 36px;
         font-family: AllertaStencil;
-        text-transform: capitalize;
+        text-transform: uppercase;
 
         &.editing {
           color: light-dark(var(--espresso), var(--white));
