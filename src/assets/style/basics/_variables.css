@@ -5,6 +5,7 @@
   /* Colors */
   --white: #fff;
   --gray-100: rgb(223, 223, 223);
+  --shadow: #00000058;
   --black: #000;
 
   --tile-gray: #787c7e;
@@ -17,5 +18,5 @@
   --desert-sand: #dab49dff;
 
   /* Styles */
-  --box-shadow: 5px 5px 9px 1px #c0c0c0;
+  --box-shadow: 5px 5px 9px 1px var(--shadow);
 }

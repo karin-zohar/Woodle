@@ -24,14 +24,14 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: var(--desert-sand);
+        background-color: light-dark(var(--desert-sand), var(--toffee-brown));
         color: var(--white);
         font-size: 36px;
         font-family: AllertaStencil;
         text-transform: capitalize;
 
         &.editing {
-          color: var(--espresso);
+          color: light-dark(var(--espresso), var(--white));
           border-color: var(--espresso);
         }
 

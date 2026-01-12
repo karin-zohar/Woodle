@@ -7,6 +7,20 @@ html {
   background-color: var(--linen);
   color: var(--espresso);
   font-family: "RobotoMono", Arial, sans-serif;
+
+  .theme {
+    background-color: light-dark(var(--linen), var(--espresso));
+    color: light-dark(var(--espresso), var(--linen));
+
+    &.light {
+      color-scheme: light;
+    }
+
+    &.dark {
+      color-scheme: dark;
+    }
+  }
+
   font-size: 16px;
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -25,7 +39,7 @@ html {
   h6 {
     &.ant-typography {
       font-family: "YatraOne";
-      color: var(--espresso);
+      color: inherit;
       line-height: 1.1em;
       margin-block: 10px;
       letter-spacing: 0.08em;
