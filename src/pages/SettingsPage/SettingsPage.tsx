@@ -10,8 +10,8 @@ const SettingsPage = () => {
     <div className="settings-page">
       <Flex className="settings-container" vertical gap={20}>
         <Flex className="setting setting-theme" gap={20}>
-          <span>{`${theme} theme`}</span>
           <Switch defaultChecked onChange={onChange} />
+          <span>{`${theme} theme`}</span>
         </Flex>
       </Flex>
     </div>
