@@ -3,14 +3,21 @@ import GameBoard from "./components/GameBoard/GameBoard";
 import Keyboard from "./components/Keyboard/Keyboard";
 import type { TileRowType, TileType } from "./GamePlayPage.type";
 import "./game-play-page.style.css";
+import { useGame } from "@/libs/hooks/useGame";
 
 const GamePlayPage = () => {
+  const { gameSettings } = useGame();
+  const { wordLength } = gameSettings;
+
   const emptyTile: TileType = { status: "empty" };
   const emptyRow: TileRowType = {
-    tiles: Array.from({ length: 5 }, () => emptyTile),
+    tiles: Array.from({ length: wordLength }, () => emptyTile),
   };
 
-  const emptyBoard: TileRowType[] = Array.from({ length: 6 }, () => emptyRow);
+  const emptyBoard: TileRowType[] = Array.from(
+    { length: wordLength + 1 },
+    () => emptyRow
+  );
 
   const [board, setBoard] = useState<TileRowType[]>(emptyBoard);
   const [guesses, setGuesses] = useState<string[]>([]);
