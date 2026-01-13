@@ -6,6 +6,15 @@ import type {
   UseGameReturn,
   WordLength,
 } from "./useGame.type";
+import { createEmptyRow } from "./useGame.util";
+
+const TILE_STATUS = {
+  CORRECT: "green",
+  PRESENT: "yellow",
+  ABSENT: "gray",
+  EMPTY: "empty",
+  EDITING: "editing",
+} as const;
 
 export const useGame = (): UseGameReturn => {
   const defaultGameSettings: GameSettings = {
@@ -22,16 +31,13 @@ export const useGame = (): UseGameReturn => {
   };
 
   // Board
-  const createEmptyTile = (): TileType => ({ status: "empty" });
-
-  const createEmptyRow = (): TileRowType => ({
-    tiles: Array.from({ length: gameSettings.wordLength }, createEmptyTile),
-  });
 
   const [guesses, setGuesses] = useState<string[]>([]);
 
   const [board, setBoard] = useState<TileRowType[]>(() =>
-    Array.from({ length: gameSettings.wordLength + 1 }, createEmptyRow)
+    Array.from({ length: gameSettings.wordLength + 1 }, () =>
+      createEmptyRow(gameSettings.wordLength)
+    )
   );
 
   const addGuess = () => {
@@ -73,19 +79,19 @@ export const useGame = (): UseGameReturn => {
 
     if (currentGuess === solution) {
       guessLetters.forEach((_letter, i) =>
-        updateTile(rowIdx, i, { status: "green" })
+        updateTile(rowIdx, i, { status: TILE_STATUS.CORRECT })
       );
       // user wins
     }
 
     const guessResult: Partial<TileType>[] = guessLetters.map((letter, i) => {
       if (letter === solution[i]) {
-        return { status: "green" };
+        return { status: TILE_STATUS.CORRECT };
       }
       if (solution.includes(letter)) {
-        return { status: "yellow" };
+        return { status: TILE_STATUS.PRESENT };
       }
-      return { status: "gray" };
+      return { status: TILE_STATUS.ABSENT };
     });
 
     guessResult.forEach((tile: Partial<TileType>, i) =>
@@ -114,7 +120,7 @@ export const useGame = (): UseGameReturn => {
       );
       updateTile(activeRowIdx, lastTypedTileIdx, {
         content: "",
-        status: "empty",
+        status: TILE_STATUS.EMPTY,
       });
       return;
     }
@@ -123,7 +129,7 @@ export const useGame = (): UseGameReturn => {
     }
     updateTile(activeRowIdx, firstEmptyTileIdx, {
       content: key,
-      status: "editing",
+      status: TILE_STATUS.EDITING,
     });
   };
 
