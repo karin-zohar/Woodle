@@ -13,18 +13,17 @@ type KeyboardProps = {
   onType: (key: string) => void;
 };
 
-const Keyboard: FC<KeyboardProps> = ({
-  updateTile,
-  submitGuess,
-  guesses,
-  onType,
-}) => {
+const Keyboard: FC<KeyboardProps> = ({ submitGuess, onType }) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
       const isLetter = /^[a-zA-Z]$/.test(event.key);
       const isBackspace = event.key === "Backspace";
+      const isEnter = event.key === "Enter";
       if (isLetter || isBackspace) {
         onType(event.key);
+      }
+      if (isEnter) {
+        submitGuess();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -33,23 +32,10 @@ const Keyboard: FC<KeyboardProps> = ({
     };
   }, [onType]);
 
-  // TODO: replace with real function
-  const tempUpdate = () => {
-    updateTile(0, 0, { status: "editing", content: "A" });
-    updateTile(0, 1, { status: "editing", content: "R" });
-    updateTile(0, 2, { status: "editing", content: "I" });
-    updateTile(0, 3, { status: "editing", content: "S" });
-    updateTile(0, 4, { status: "editing", content: "E" });
-  };
-
   return (
     <div>
       keyboard
-      <Button onClick={tempUpdate}>update</Button>
       <Button onClick={submitGuess}>submit</Button>
-      <Button onClick={() => console.log("guesses:", guesses)}>
-        show guesses
-      </Button>
     </div>
   );
 };
