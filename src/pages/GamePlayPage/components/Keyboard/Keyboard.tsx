@@ -1,5 +1,5 @@
-import type { Dispatch, FC, SetStateAction } from "react";
-import type { TileRowType, TileType } from "../../GamePlayPage.type";
+import type { FC } from "react";
+import type { TileType } from "../../GamePlayPage.type";
 import { Button } from "antd";
 
 type KeyboardProps = {
@@ -8,24 +8,18 @@ type KeyboardProps = {
     tileId: number,
     newTileDetails: Partial<TileType>
   ) => void;
-  setGuesses: Dispatch<SetStateAction<string[]>>;
-  activeRow: TileRowType;
+  addGuess: () => void;
+  guesses: string[];
 };
 
-const Keyboard: FC<KeyboardProps> = ({ updateTile, setGuesses, activeRow }) => {
+const Keyboard: FC<KeyboardProps> = ({ updateTile, addGuess, guesses }) => {
   // TODO: replace with real function
   const tempUpdate = () => {
-    updateTile(0, 0, { status: "green", content: "A" });
-    updateTile(0, 1, { status: "yellow", content: "R" });
-    updateTile(0, 2, { status: "gray", content: "I" });
-    updateTile(0, 3, { status: "green", content: "S" });
-    updateTile(0, 4, { status: "yellow", content: "E" });
-  };
-
-  const addGuess = () => {
-    const guess: string = activeRow.tiles.map((tile) => tile.content).join("");
-    // validate guess, if valid:
-    setGuesses((prevGuesses) => [...prevGuesses, guess]);
+    updateTile(0, 0, { status: "editing", content: "A" });
+    updateTile(0, 1, { status: "editing", content: "R" });
+    updateTile(0, 2, { status: "editing", content: "I" });
+    updateTile(0, 3, { status: "editing", content: "S" });
+    updateTile(0, 4, { status: "editing", content: "E" });
   };
 
   return (
@@ -33,6 +27,9 @@ const Keyboard: FC<KeyboardProps> = ({ updateTile, setGuesses, activeRow }) => {
       keyboard
       <Button onClick={tempUpdate}>update</Button>
       <Button onClick={addGuess}>submit</Button>
+      <Button onClick={() => console.log("guesses:", guesses)}>
+        show guesses
+      </Button>
     </div>
   );
 };

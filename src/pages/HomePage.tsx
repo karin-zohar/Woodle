@@ -1,21 +1,21 @@
+import { useGame } from "@/libs/hooks/useGame";
 import { Button, Typography } from "antd";
-import type { FC } from "react";
 import { useNavigate } from "react-router-dom";
-
-type HomePageProps = {
-  guessAmount: number;
-};
 
 type GameStatus = "notStarted" | "inProgress" | "finished";
 
-const MAX_GUESS_AMOUNT = 6;
-
-const HomePage: FC<HomePageProps> = ({ guessAmount = 0 }) => {
+const HomePage = () => {
   const navigate = useNavigate();
+  const { gameSettings, guesses } = useGame();
+  const { wordLength } = gameSettings;
+  const maxGuessAmount = wordLength + 1;
+  const guessAmount = guesses.length;
+
   const { Title } = Typography;
+
   const gameStatus: GameStatus =
     guessAmount > 0
-      ? guessAmount < MAX_GUESS_AMOUNT
+      ? guessAmount < maxGuessAmount
         ? "inProgress"
         : "finished"
       : "notStarted";
@@ -23,14 +23,14 @@ const HomePage: FC<HomePageProps> = ({ guessAmount = 0 }) => {
   const contentByStatus = {
     notStarted: {
       header: "Woodle",
-      subheader: `Get ${MAX_GUESS_AMOUNT} chances to guess a ${
-        MAX_GUESS_AMOUNT - 1
+      subheader: `Get ${maxGuessAmount} chances to guess a ${
+        maxGuessAmount - 1
       }-letter word.`,
       button: "Play",
     },
     inProgress: {
       header: "Welcome Back",
-      subheader: `You've made ${guessAmount} out of ${MAX_GUESS_AMOUNT} guesses. Keep it up!`,
+      subheader: `You've made ${guessAmount} out of ${maxGuessAmount} guesses. Keep it up!`,
       button: "Continue",
     },
     finished: {
