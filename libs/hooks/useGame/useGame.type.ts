@@ -29,5 +29,6 @@ export type UseGameReturn = {
     newTileDeatils: Partial<TileType>
   ) => void;
   guesses: string[];
-  addGuess: () => void;
+  submitGuess: () => void;
+  onType: (key: string) => void;
 };

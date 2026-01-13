@@ -37,8 +37,9 @@ export const useGame = (): UseGameReturn => {
   const addGuess = () => {
     const activeRow = board[guesses.length];
     const guess = activeRow.tiles.map((tile) => tile.content ?? "").join("");
-
+    // validate guess
     setGuesses((prev) => [...prev, guess]);
+    return guess;
   };
 
   const updateTile = (
@@ -59,6 +60,70 @@ export const useGame = (): UseGameReturn => {
       });
 
       return next;
+    });
+  };
+
+  const checkGuess = (currentGuess: string, rowIdx: number) => {
+    const { solution } = gameSettings;
+    if (!currentGuess) {
+      return;
+    }
+
+    const guessLetters = currentGuess.toLowerCase().split("");
+
+    if (currentGuess === solution) {
+      guessLetters.forEach((_letter, i) =>
+        updateTile(rowIdx, i, { status: "green" })
+      );
+      // user wins
+    }
+
+    const guessResult: Partial<TileType>[] = guessLetters.map((letter, i) => {
+      if (letter === solution[i]) {
+        return { status: "green" };
+      }
+      if (solution.includes(letter)) {
+        return { status: "yellow" };
+      }
+      return { status: "gray" };
+    });
+
+    guessResult.forEach((tile: Partial<TileType>, i) =>
+      updateTile(rowIdx, i, tile)
+    );
+  };
+
+  const submitGuess = () => {
+    const currentRowIndex = guesses.length;
+    const guess = addGuess();
+    if (guess) {
+      checkGuess(guess, currentRowIndex);
+    }
+  };
+
+  const onType = (key: string) => {
+    const activeRowIdx = guesses.length;
+    const activeRow = board[activeRowIdx];
+    const firstEmptyTileIdx = activeRow.tiles.findIndex(
+      (tile: TileType) => !tile.content
+    );
+
+    if (key === "Backspace") {
+      const lastTypedTileIdx = activeRow.tiles.findLastIndex(
+        (tile: TileType) => !!tile.content
+      );
+      updateTile(activeRowIdx, lastTypedTileIdx, {
+        content: "",
+        status: "empty",
+      });
+      return;
+    }
+    if (firstEmptyTileIdx === -1) {
+      return;
+    }
+    updateTile(activeRowIdx, firstEmptyTileIdx, {
+      content: key,
+      status: "editing",
     });
   };
 
@@ -88,6 +153,7 @@ export const useGame = (): UseGameReturn => {
     board,
     updateTile,
     guesses,
-    addGuess,
+    submitGuess,
+    onType,
   };
 };

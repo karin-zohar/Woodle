@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import { useEffect, type FC } from "react";
 import { Button } from "antd";
 import type { TileType } from "@/libs/hooks/useGame";
 
@@ -8,11 +8,31 @@ type KeyboardProps = {
     tileId: number,
     newTileDetails: Partial<TileType>
   ) => void;
-  addGuess: () => void;
+  submitGuess: () => void;
   guesses: string[];
+  onType: (key: string) => void;
 };
 
-const Keyboard: FC<KeyboardProps> = ({ updateTile, addGuess, guesses }) => {
+const Keyboard: FC<KeyboardProps> = ({
+  updateTile,
+  submitGuess,
+  guesses,
+  onType,
+}) => {
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      const isLetter = /^[a-zA-Z]$/.test(event.key);
+      const isBackspace = event.key === "Backspace";
+      if (isLetter || isBackspace) {
+        onType(event.key);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onType]);
+
   // TODO: replace with real function
   const tempUpdate = () => {
     updateTile(0, 0, { status: "editing", content: "A" });
@@ -26,7 +46,7 @@ const Keyboard: FC<KeyboardProps> = ({ updateTile, addGuess, guesses }) => {
     <div>
       keyboard
       <Button onClick={tempUpdate}>update</Button>
-      <Button onClick={addGuess}>submit</Button>
+      <Button onClick={submitGuess}>submit</Button>
       <Button onClick={() => console.log("guesses:", guesses)}>
         show guesses
       </Button>

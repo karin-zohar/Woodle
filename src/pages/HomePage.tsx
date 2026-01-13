@@ -10,7 +10,7 @@ const HomePage = () => {
   const { wordLength } = gameSettings;
   const maxGuessAmount = wordLength + 1;
   const guessAmount = guesses.length;
-
+  console.log("guessAmount:", guessAmount);
   const { Title } = Typography;
 
   const gameStatus: GameStatus =
