@@ -1,13 +1,14 @@
 import type { FC } from "react";
 import "./game-board.style.css";
-import type { GameBoardProps } from "../../GamePlayPage.type";
+
 import TileRow from "./components/TileRow";
+import type { GameBoardProps, TileRowType } from "@/libs/hooks/useGame";
 
 const GameBoard: FC<GameBoardProps> = ({ rows }) => {
   return (
     <div className="game-board wood-grain">
       <div className="rows-container">
-        {rows.map((row) => (
+        {rows.map((row: TileRowType) => (
           <TileRow tiles={row.tiles} />
         ))}
       </div>
