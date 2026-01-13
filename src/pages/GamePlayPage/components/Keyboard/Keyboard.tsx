@@ -1,6 +1,6 @@
 import type { FC } from "react";
-import type { TileType } from "../../GamePlayPage.type";
 import { Button } from "antd";
+import type { TileType } from "@/libs/hooks/useGame";
 
 type KeyboardProps = {
   updateTile: (
