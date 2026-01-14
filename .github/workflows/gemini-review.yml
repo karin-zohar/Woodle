@@ -21,7 +21,7 @@ jobs:
         uses: google-gemini/gemini-github-action@v1
         with:
           apiKey: ${{ secrets.GEMINI_API_KEY }}
-          model: "gemini-1.5-flash" # Using Flash to stay within your free quota
+          model: "gemini-1.5-flash" # Using Flash to stay within free quota
           instructions: |
             You are a Senior React/TypeScript Developer. 
             Review this Pull Request for:
