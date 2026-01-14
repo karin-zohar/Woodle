@@ -23,12 +23,8 @@ export type UseGameReturn = {
   gameSettings: GameSettings;
   setWordLength: (selectedWordLength: WordLength) => void;
   board: TileRowType[];
-  updateTile: (
-    rowId: number,
-    tileId: number,
-    newTileDeatils: Partial<TileType>
-  ) => void;
   guesses: string[];
   submitGuess: () => void;
   onType: (key: string) => void;
+  currentGuess: string;
 };

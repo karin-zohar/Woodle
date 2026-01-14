@@ -4,17 +4,12 @@ import "./game-play-page.style.css";
 import { useGame } from "@/libs/hooks/useGame/index";
 
 const GamePlayPage = () => {
-  const { board, updateTile, submitGuess, guesses, onType } = useGame();
+  const { board, submitGuess, guesses, onType } = useGame();
 
   return (
     <div className="game-play-page">
       <GameBoard rows={board} />
-      <Keyboard
-        updateTile={updateTile}
-        submitGuess={submitGuess}
-        guesses={guesses}
-        onType={onType}
-      />
+      <Keyboard submitGuess={submitGuess} guesses={guesses} onType={onType} />
     </div>
   );
 };

@@ -1,13 +1,7 @@
 import { useEffect, type FC } from "react";
 import { Button } from "antd";
-import type { TileType } from "@/libs/hooks/useGame";
 
 type KeyboardProps = {
-  updateTile: (
-    rowId: number,
-    tileId: number,
-    newTileDetails: Partial<TileType>
-  ) => void;
   submitGuess: () => void;
   guesses: string[];
   onType: (key: string) => void;
