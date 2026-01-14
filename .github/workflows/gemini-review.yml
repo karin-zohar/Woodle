@@ -20,22 +20,16 @@ jobs:
       - name: Google Gemini Code Review
         uses: google-github-actions/run-gemini-cli@v0
         with:
-          # Use the exact variable names the CLI requested
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
           gemini_model: "gemini-1.5-flash"
-          # We combine the command and the rules into one prompt
+          # We use a raw prompt to avoid the deprecated --prompt flag issue
           prompt: |
-            /review 
-            You are a Senior React/TypeScript Developer.
+            Identify and review the code changes in this PR.
+            You MUST output ONLY a JSON array. No text before or after.
 
-            STRICT RULES:
-            1. You MUST output your review ONLY as a valid JSON array of objects.
-            2. Do NOT include any markdown formatting (like ```json) or conversational text.
-            3. Each object in the array must follow this schema:
-               {"path": "string", "line": number, "body": "string"}
+            Format: [{"path": "string", "line": number, "body": "string"}]
 
-            REVIEW FOCUS:
-            1. Suggest 'Derived State' instead of manual board updates (the Board should be calculated from 'guesses' and 'currentGuess').
-            2. Check for logic bugs in the Wordle mechanics (specifically double-letter handling in the status check).
-            3. Identify hardcoded values that should be moved to a constants file.
-            4. Explain your suggestions like a mentor teaching a student.
+            Review for:
+            1. React 'Derived State' vs manual board updates.
+            2. Logic bugs in Wordle (double-letters).
+            3. Hardcoded constants.
