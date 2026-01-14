@@ -1,17 +1,18 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { GameSettings, UseGameReturn, WordLength } from "./useGame.type";
 import { calculateRowStatus } from "./useGame.util";
 import { TILE_STATUS } from "./useGame.type";
 
-export const useGame = (): UseGameReturn => {
-  const defaultGameSettings: GameSettings = {
-    wordLength: 5,
-    solution: "trial", // temp hardcoded
-  };
+const DEFAULT_GAME_SETTINGS: GameSettings = {
+  wordLength: 5,
+  solution: "trial", // temp hardcoded
+};
 
+export const useGame = (): UseGameReturn => {
   // Settings
-  const [gameSettings, setGameSettings] =
-    useState<GameSettings>(defaultGameSettings);
+  const [gameSettings, setGameSettings] = useState<GameSettings>(
+    DEFAULT_GAME_SETTINGS
+  );
 
   const setWordLength = (selectedWordLength: WordLength) => {
     setGameSettings((prev) => ({ ...prev, wordLength: selectedWordLength }));
@@ -21,28 +22,32 @@ export const useGame = (): UseGameReturn => {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
 
-  const board = Array.from({ length: gameSettings.wordLength }).map(
-    (_, rowIndex) => {
-      const word =
-        guesses[rowIndex] || (rowIndex === guesses.length ? currentGuess : "");
+  // TODO: memoize board
+  const board = useMemo(() => {
+    return Array.from({ length: gameSettings.wordLength }).map(
+      (_, rowIndex) => {
+        const word =
+          guesses[rowIndex] ||
+          (rowIndex === guesses.length ? currentGuess : "");
 
-      const isFinished = rowIndex < guesses.length;
+        const isFinished = rowIndex < guesses.length;
 
-      const rowStatuses = isFinished
-        ? calculateRowStatus(word, gameSettings.solution)
-        : [];
+        const rowStatuses = isFinished
+          ? calculateRowStatus(word, gameSettings.solution)
+          : [];
 
-      return {
-        tiles: word
-          .padEnd(gameSettings.wordLength, " ")
-          .split("")
-          .map((char, charIndex) => ({
-            content: char.trim(),
-            status: isFinished ? rowStatuses[charIndex] : TILE_STATUS.EDITING,
-          })),
-      };
-    }
-  );
+        return {
+          tiles: word
+            .padEnd(gameSettings.wordLength, " ")
+            .split("")
+            .map((char, charIndex) => ({
+              content: char.trim(),
+              status: isFinished ? rowStatuses[charIndex] : TILE_STATUS.EDITING,
+            })),
+        };
+      }
+    );
+  }, [guesses, currentGuess, gameSettings]);
 
   const addGuess = () => {
     if (currentGuess.length === gameSettings.wordLength) {
@@ -57,18 +62,21 @@ export const useGame = (): UseGameReturn => {
     addGuess();
   };
 
-  const onType = (key: string) => {
-    if (key === "Backspace") {
-      setCurrentGuess((prev) => prev.slice(0, -1));
-      return;
-    }
-    const isRowFull = currentGuess.length === gameSettings.wordLength;
-    if (isRowFull) {
-      return;
-    }
+  const onType = useCallback(
+    (key: string) => {
+      if (key === "Backspace") {
+        setCurrentGuess((prev) => prev.slice(0, -1));
+        return;
+      }
+      const isRowFull = currentGuess.length === gameSettings.wordLength;
+      if (isRowFull) {
+        return;
+      }
 
-    setCurrentGuess((prev) => prev + key);
-  };
+      setCurrentGuess((prev) => prev + key);
+    },
+    [gameSettings.wordLength, currentGuess]
+  );
 
   return {
     gameSettings,
