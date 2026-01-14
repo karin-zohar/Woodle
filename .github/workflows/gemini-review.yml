@@ -18,9 +18,9 @@ jobs:
           fetch-depth: 0
 
       - name: Google Gemini Code Review
-        uses: google-gemini/gemini-github-action@v1
+        uses: google/gemini-github-action@main
         with:
-          apiKey: ${{ secrets.GEMINI_API_KEY }}
+          api-key: ${{ secrets.GEMINI_API_KEY }}
           model: "gemini-1.5-flash" # Using Flash to stay within free quota
           instructions: |
             You are a Senior React/TypeScript Developer. 
