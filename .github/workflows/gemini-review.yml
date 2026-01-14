@@ -22,14 +22,11 @@ jobs:
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
           gemini_model: "gemini-1.5-flash"
-          # We use a raw prompt to avoid the deprecated --prompt flag issue
-          prompt: |
-            Identify and review the code changes in this PR.
-            You MUST output ONLY a JSON array. No text before or after.
-
-            Format: [{"path": "string", "line": number, "body": "string"}]
-
-            Review for:
-            1. React 'Derived State' vs manual board updates.
-            2. Logic bugs in Wordle (double-letters).
-            3. Hardcoded constants.
+          # We place the instruction directly as the prompt.
+          # Note: No 'prompt:' label here because we want it as a positional argument.
+          # The CLI will now interpret this string as the main command.
+          args: >
+            "/review 
+            Review the code changes. 
+            Output ONLY a JSON array: [{\"path\": \"string\", \"line\": number, \"body\": \"string\"}].
+            Focus on React 'Derived State' vs manual board updates and double-letter logic."
