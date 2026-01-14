@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import type { GameSettings, UseGameReturn, WordLength } from "./useGame.type";
-import { calculateRowStatus } from "./useGame.util";
+import { calculateRowStatus, getKeyboardAction } from "./useGame.util";
 import { TILE_STATUS } from "./useGame.type";
 
 const DEFAULT_GAME_SETTINGS: GameSettings = {
@@ -68,14 +68,37 @@ export const useGame = (): UseGameReturn => {
         setCurrentGuess((prev) => prev.slice(0, -1));
         return;
       }
-      const isRowFull = currentGuess.length === gameSettings.wordLength;
-      if (isRowFull) {
-        return;
-      }
 
-      setCurrentGuess((prev) => prev + key);
+      const result = getKeyboardAction(
+        key,
+        currentGuess,
+        gameSettings.wordLength
+      );
+
+      switch (result.action) {
+        case "SUBMIT":
+          if (result.isValid) {
+            submitGuess();
+          } else {
+            console.log("Word too short!");
+            // TODO: trigger a shake animation here.
+          }
+          break;
+
+        case "TYPE":
+          if (result.isValid) {
+            setCurrentGuess(currentGuess + key.toLowerCase());
+          } else {
+            console.log("Row is full!");
+          }
+          break;
+
+        default:
+          // Ignore other keys like 'Shift', 'Alt', etc.
+          break;
+      }
     },
-    [gameSettings.wordLength, currentGuess]
+    [currentGuess, gameSettings.wordLength, submitGuess]
   );
 
   return {

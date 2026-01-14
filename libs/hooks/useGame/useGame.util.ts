@@ -1,4 +1,4 @@
-import { TILE_STATUS } from "./useGame.type";
+import { TILE_STATUS, type ValidationResult } from "./useGame.type";
 
 export const calculateRowStatus = (guess: string, solution: string) => {
   const solutionChars = solution.split("");
@@ -24,4 +24,26 @@ export const calculateRowStatus = (guess: string, solution: string) => {
   });
 
   return statuses;
+};
+
+export const getKeyboardAction = (
+  key: string,
+  currentGuess: string,
+  wordLength: number
+): ValidationResult => {
+  if (key === "Enter") {
+    return {
+      action: "SUBMIT",
+      isValid: currentGuess.length === wordLength,
+    };
+  }
+
+  if (/^[a-zA-Z]$/.test(key)) {
+    return {
+      action: "TYPE",
+      isValid: currentGuess.length < wordLength,
+    };
+  }
+
+  return { action: "IGNORE" };
 };

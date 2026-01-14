@@ -1,8 +1,7 @@
 import type { FC } from "react";
-import "./game-board.style.css";
-
-import TileRow from "./components/TileRow";
 import type { GameBoardProps, TileRowType } from "@/libs/hooks/useGame";
+import TileRow from "./components/TileRow";
+import "./game-board.style.css";
 
 const GameBoard: FC<GameBoardProps> = ({ rows }) => {
   return (

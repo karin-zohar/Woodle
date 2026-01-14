@@ -38,3 +38,8 @@ export type UseGameReturn = {
   onType: (key: string) => void;
   currentGuess: string;
 };
+
+export type ValidationResult =
+  | { action: "TYPE"; isValid: boolean }
+  | { action: "SUBMIT"; isValid: boolean }
+  | { action: "IGNORE" };
