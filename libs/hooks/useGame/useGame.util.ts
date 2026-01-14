@@ -1,5 +1,5 @@
 import type { TileType, TileRowType } from "./index";
-import { TILE_STATUS } from "./useGame.const";
+import { TILE_STATUS } from "./useGame.type";
 
 const createEmptyTile = (): TileType => ({ status: "empty" });
 

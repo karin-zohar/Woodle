@@ -1,5 +1,15 @@
+export const TILE_STATUS = {
+  CORRECT: "green",
+  PRESENT: "yellow",
+  ABSENT: "gray",
+  EMPTY: "empty",
+  EDITING: "editing",
+} as const;
+
+export type TileStatusValue = (typeof TILE_STATUS)[keyof typeof TILE_STATUS];
+
 export type TileType = {
-  status: "empty" | "editing" | "gray" | "yellow" | "green";
+  status: TileStatusValue;
   content?: string;
 };
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { GameSettings, UseGameReturn, WordLength } from "./useGame.type";
 import { calculateRowStatus } from "./useGame.util";
-import { TILE_STATUS } from "./useGame.const";
+import { TILE_STATUS } from "./useGame.type";
 
 export const useGame = (): UseGameReturn => {
   const defaultGameSettings: GameSettings = {
