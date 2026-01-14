@@ -1,0 +1,32 @@
+name: Gemini Code Reviewer
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Google Gemini Code Review
+        uses: google-gemini/gemini-github-action@v1
+        with:
+          apiKey: ${{ secrets.GEMINI_API_KEY }}
+          model: "gemini-1.5-flash" # Using Flash to stay within your free quota
+          instructions: |
+            You are a Senior React/TypeScript Developer. 
+            Review this Pull Request for:
+            1. Unnecessary Use of State (Suggest Derived State).
+            2. Hardcoded values that should be Constants.
+            3. Logic bugs in the Wordle game mechanics (especially double-letter handling).
+            4. React Performance (unnecessary re-renders).
+            Please explain your suggestions like a mentor teaching a student.
