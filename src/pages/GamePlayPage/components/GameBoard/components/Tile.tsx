@@ -1,6 +1,6 @@
+import type { TileType } from "@/libs/hooks/useGame";
 import clsx from "clsx";
 import type { FC } from "react";
-import type { TileType } from "../../../GamePlayPage.type";
 
 const Tile: FC<TileType> = ({ status, content }) => {
   return (

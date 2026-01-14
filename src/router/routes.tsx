@@ -12,7 +12,7 @@ const SettingsPage = lazy(
 const routes: RouteObject[] = [
   {
     path: "/",
-    element: <HomePage guessAmount={0} />,
+    element: <HomePage />,
   },
   {
     path: "/play",
