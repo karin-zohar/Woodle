@@ -74,6 +74,10 @@ body {
     list-style: none;
   }
 
+  .ant-divider {
+    background-color: var(--toffee-brown);
+  }
+
   .ant-switch {
     border: 2px solid light-dark(var(--toffee-brown), var(--linen));
     box-shadow: var(--box-shadow);
@@ -102,6 +106,14 @@ body {
           transform: scale(70%);
         }
       }
+    }
+  }
+
+  .ant-modal .ant-modal-container {
+    background-color: transparent;
+    box-shadow: none;
+    .ant-modal-close {
+      display: none;
     }
   }
 }
