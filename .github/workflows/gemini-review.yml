@@ -18,15 +18,14 @@ jobs:
           fetch-depth: 0
 
       - name: Google Gemini Code Review
-        uses: google/gemini-github-action@main
+        uses: google-github-actions/run-gemini-cli@v0 # <--- Use this official path
         with:
           api-key: ${{ secrets.GEMINI_API_KEY }}
-          model: "gemini-1.5-flash" # Using Flash to stay within free quota
+          model: "gemini-1.5-flash"
+          # The official action uses a slightly different command structure for PR reviews
+          command: "/review"
           instructions: |
-            You are a Senior React/TypeScript Developer. 
-            Review this Pull Request for:
-            1. Unnecessary Use of State (Suggest Derived State).
-            2. Hardcoded values that should be Constants.
-            3. Logic bugs in the Wordle game mechanics (especially double-letter handling).
-            4. React Performance (unnecessary re-renders).
-            Please explain your suggestions like a mentor teaching a student.
+            You are a Senior React Developer. Focus on:
+            1. Using Derived State instead of manual board updates.
+            2. Logic bugs (double-letter counts).
+            3. React performance and hardcoded constants.
