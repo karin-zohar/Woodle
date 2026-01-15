@@ -1,16 +1,27 @@
-name: Gemini Review
+name: Gemini Code Reviewer
+
 on:
   pull_request:
     types: [opened, synchronize]
+
 jobs:
   review:
     runs-on: ubuntu-latest
-    permissions: { contents: read, pull-requests: write }
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Gemini AI Review
+        # We are using the most stable version of the runner
         uses: google-github-actions/run-gemini-cli@v0
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          gemini_model: "gemini-1.5-flash" # Flash has the highest free quota
-          prompt: 'Review these changes. Output ONLY a JSON array: [{"path": "file", "line": 1, "body": "msg"}]'
+          gemini_model: "gemini-1.5-flash"
+          # Instead of /review, we use a single-line prompt to avoid multiline output issues
+          prompt: "Review the code changes in this PR. Identify logic errors or React state issues. Output your feedback as a simple bulleted list."
