@@ -1,0 +1,66 @@
+button.gen-close-button.ant-btn {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  box-shadow: none;
+
+  .ant-btn-icon {
+    color: var(--espresso);
+    transition: color 0.1s ease-in-out;
+  }
+
+  &:hover {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+
+    .ant-btn-icon {
+      color: var(--golden-chestnut);
+    }
+  }
+
+  &:active,
+  &:focus,
+  &:focus-visible {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    outline: none;
+  }
+
+  &:hover.ant-btn,
+  &:active.ant-btn,
+  &:focus.ant-btn,
+  &:focus-visible.ant-btn {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  &.gen-close-button-large {
+    height: 48px;
+    width: 48px;
+
+    .ant-btn-icon {
+      font-size: 48px;
+    }
+  }
+
+  &.gen-close-button-medium {
+    height: 24px;
+    width: 24px;
+
+    .ant-btn-icon {
+      font-size: 24px;
+    }
+  }
+
+  &.gen-close-button-small {
+    height: 18px;
+    width: 18px;
+
+    .ant-btn-icon {
+      font-size: 18px;
+    }
+  }
+}

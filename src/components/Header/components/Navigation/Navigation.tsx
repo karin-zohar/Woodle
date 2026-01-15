@@ -3,7 +3,7 @@ import { useWindowSize } from "react-use";
 import NavContent from "./components/NavContent.tsx";
 import NavDrawer from "./components/NavDrawer.tsx";
 
-const NARROW_SCREEN_WIDTH = 1000;
+const NARROW_SCREEN_WIDTH = 700;
 
 const Navigation = () => {
   const { width: windowWidth } = useWindowSize();

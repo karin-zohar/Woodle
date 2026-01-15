@@ -1,10 +1,10 @@
-import { useGame } from "@/libs/hooks/useGame";
 import { Button, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
+import useStore from "@/store/store";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { gameSettings } = useGame();
+  const { gameSettings } = useStore();
   const { wordLength } = gameSettings;
   const maxGuessAmount = wordLength + 1;
   const { Title } = Typography;

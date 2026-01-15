@@ -22,16 +22,8 @@ export type GameBoardProps = {
 };
 
 export type UseGameProps = {};
-export type WordLength = 5 | 6 | 7;
-
-export type GameSettings = {
-  wordLength: WordLength;
-  solution: string;
-};
 
 export type UseGameReturn = {
-  gameSettings: GameSettings;
-  setWordLength: (selectedWordLength: WordLength) => void;
   board: TileRowType[];
   guesses: string[];
   submitGuess: () => void;

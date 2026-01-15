@@ -1,8 +1,9 @@
 import { type FC } from "react";
 import { Button, Drawer } from "antd";
 import NavContent from "./NavContent";
+import GenCloseButton from "@/libs/ui/components/GenCloseButton/GenCloseButton";
 import clsx from "clsx";
-import { CloseIcon, MenuIcon } from "@/libs/ui/icons/index";
+import { MenuIcon } from "@/libs/ui/icons/index";
 
 type NavDrawerProps = {
   open: boolean;
@@ -27,7 +28,7 @@ const NavDrawer: FC<NavDrawerProps> = ({ open, onOpen, onClose }) => {
         className={clsx("nav-drawer")}
         open={open}
         onClose={onClose}
-        closeIcon={<CloseIcon />}
+        closeIcon={<GenCloseButton onClose={onClose} size="large" />}
       >
         <NavContent layout={"vertical"} closeDrawer={onClose} />
       </Drawer>

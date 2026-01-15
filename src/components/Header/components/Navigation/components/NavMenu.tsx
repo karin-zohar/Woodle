@@ -33,7 +33,17 @@ const NavMenu: FC<NavMenuProps> = ({ layout, closeDrawer }) => {
   ];
 
   const handleItemClick: MenuProps["onClick"] = ({ key }) => {
-    navigate(key);
+    if (key === "/settings") {
+      const params = new URLSearchParams(location.search);
+      params.set("settings", "true");
+
+      navigate({
+        pathname: location.pathname,
+        search: params.toString(),
+      });
+    } else {
+      navigate(key);
+    }
     closeDrawer?.();
   };
 
