@@ -1,6 +1,9 @@
 .settings-page {
   display: flex;
   justify-content: center;
+  background-color: transparent;
+  /* Modal wrapper - transparent background */
+
   .settings-container {
     background-color: light-dark(var(--desert-sand), var(--toffee-brown));
     height: 400px;
@@ -9,6 +12,19 @@
     border-radius: 20px;
     box-shadow: var(--box-shadow);
     padding: 24px 16px;
+    justify-content: center;
+    color: light-dark(var(--espresso), var(--linen));
+
+    .settings-title {
+      margin: 0;
+      text-align: center;
+      color: inherit;
+    }
+
+    .settings-content {
+      flex: 1;
+      justify-content: center;
+    }
 
     .setting {
       justify-content: center;

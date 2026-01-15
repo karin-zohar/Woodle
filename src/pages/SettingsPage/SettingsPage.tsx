@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from "react-router";
-import { Divider, Flex, Modal, Switch } from "antd";
+import { Divider, Flex, Modal, Switch, Typography } from "antd";
 import useStore from "@/store/store";
 import WordLengthSetting from "./components/WordLengthSetting/WordLengthSetting";
+import clsx from "clsx";
 import "./settings-page.style.css";
 
 const SettingsPage = () => {
@@ -30,18 +31,25 @@ const SettingsPage = () => {
     setTheme(checked ? "light" : "dark");
   };
 
+  const { Title } = Typography;
+
   return (
     <Modal open={isSettingsOpen} onCancel={handleCloseModal} footer={null}>
       <div className="settings-page">
-        <Flex className="settings-container" vertical>
-          <Flex className="setting setting-theme" align="center" gap={20}>
-            <Switch checked={theme === "light"} onChange={onChangeTheme} />
-            <span
-              style={{ textTransform: "capitalize" }}
-            >{`${theme} theme`}</span>
+        <Flex className={clsx("settings-container", "theme", theme)} vertical>
+          <Title level={2} className="settings-title">
+            Settings
+          </Title>
+          <Flex className="settings-content" vertical>
+            <Flex className="setting setting-theme" align="center" gap={20}>
+              <Switch checked={theme === "light"} onChange={onChangeTheme} />
+              <span
+                style={{ textTransform: "capitalize" }}
+              >{`${theme} theme`}</span>
+            </Flex>
+            <Divider />
+            <WordLengthSetting />
           </Flex>
-          <Divider />
-          <WordLengthSetting />
         </Flex>
       </div>
     </Modal>
