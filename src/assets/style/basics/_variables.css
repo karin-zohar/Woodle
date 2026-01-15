@@ -1,6 +1,7 @@
 :root {
   /* Sizes */
   --header-height: 62px;
+  --max-content-width: 400px;
 
   /* Colors */
   --white: #fff;
@@ -22,4 +23,10 @@
 
   /* Styles */
   --box-shadow: 5px 5px 9px 1px var(--shadow);
+}
+
+@media (min-width: 700px) {
+  :root {
+    --max-content-width: 700px;
+  }
 }

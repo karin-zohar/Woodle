@@ -1,0 +1,34 @@
+.how-to-play-page {
+  h3.ant-typography,
+  h4.ant-typography {
+    margin: 4px;
+  }
+
+  h4.ant-typography {
+    color: light-dark(var(--toffee-brown), var(--desert-sand));
+  }
+
+  ul {
+    padding-inline: 0;
+    li span {
+      display: flex;
+      gap: 1em;
+      width: fit-content;
+      align-items: start;
+      margin-block-end: 10px;
+
+      svg {
+        margin-block-start: 4px;
+      }
+    }
+  }
+
+  .examples-wrapper {
+    .example-item {
+      margin-block-end: 18px;
+      .example-tile-row {
+        margin-block-end: 8px;
+      }
+    }
+  }
+}
