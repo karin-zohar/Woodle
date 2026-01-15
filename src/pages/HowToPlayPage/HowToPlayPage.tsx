@@ -52,7 +52,9 @@ const HowToPlayPage = () => {
   return (
     <div className="how-to-play-page">
       <Title level={3}>How To Play</Title>
-      <Title level={4}>{`Guess the word in ${wordLength + 1} tries.`}</Title>
+      <Title level={4} className={"typewriter"}>{`Guess the word in ${
+        wordLength + 1
+      } tries.`}</Title>
 
       <ul>
         <li>
