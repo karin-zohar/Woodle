@@ -1,22 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
-import type { GameSettings, UseGameReturn, WordLength } from "./useGame.type";
+import type { UseGameReturn } from "./useGame.type";
 import { calculateRowStatus, getKeyboardAction } from "./useGame.util";
 import { TILE_STATUS } from "./useGame.type";
-
-const DEFAULT_GAME_SETTINGS: GameSettings = {
-  wordLength: 5,
-  solution: "trial", // temp hardcoded
-};
+import useStore from "@/store/store";
 
 export const useGame = (): UseGameReturn => {
   // Settings
-  const [gameSettings, setGameSettings] = useState<GameSettings>(
-    DEFAULT_GAME_SETTINGS
-  );
-
-  const setWordLength = (selectedWordLength: WordLength) => {
-    setGameSettings((prev) => ({ ...prev, wordLength: selectedWordLength }));
-  };
+  const { gameSettings, setWordLength } = useStore();
 
   // Board
   const [guesses, setGuesses] = useState<string[]>([]);

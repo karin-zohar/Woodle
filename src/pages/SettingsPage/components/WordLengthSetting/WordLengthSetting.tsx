@@ -1,7 +1,7 @@
 import { Flex, type CheckboxOptionType, type RadioChangeEvent } from "antd";
 import GenRadioGroup from "@/libs/ui/components/GenRadioGroup/GenRadioGroup";
 import WordLengthSettingOption from "./components/WordLengthSettingOption";
-import { useGame } from "@/libs/hooks/useGame";
+import useStore from "@/store/store";
 
 const wordLengthOptions: CheckboxOptionType[] = [
   {
@@ -18,7 +18,7 @@ const wordLengthOptions: CheckboxOptionType[] = [
   },
 ];
 const WordLengthSetting = () => {
-  const { gameSettings, setWordLength } = useGame();
+  const { gameSettings, setWordLength } = useStore();
   const handleChange = (e: RadioChangeEvent) => {
     setWordLength(e.target.value);
   };
