@@ -1,5 +1,11 @@
 import { type StateCreator } from "zustand";
-import type { GameSettings, WordLength } from "@/libs/hooks/useGame/useGame.type";
+
+export type WordLength = 5 | 6 | 7;
+
+export type GameSettings = {
+  wordLength: WordLength;
+  solution: string;
+};
 
 export type GameSettingsSlice = {
   gameSettings: GameSettings;

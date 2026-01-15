@@ -6,7 +6,7 @@ import useStore from "@/store/store";
 
 export const useGame = (): UseGameReturn => {
   // Settings
-  const { gameSettings, setWordLength } = useStore();
+  const { gameSettings } = useStore();
 
   // Board
   const [guesses, setGuesses] = useState<string[]>([]);
@@ -92,8 +92,6 @@ export const useGame = (): UseGameReturn => {
   );
 
   return {
-    gameSettings,
-    setWordLength,
     board,
     guesses,
     submitGuess,
