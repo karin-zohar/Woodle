@@ -2,7 +2,6 @@
   display: flex;
   justify-content: center;
   background-color: transparent;
-  /* Modal wrapper - transparent background */
 
   .settings-container {
     background-color: light-dark(var(--desert-sand), var(--toffee-brown));
@@ -14,11 +13,19 @@
     padding: 24px 16px;
     justify-content: center;
     color: light-dark(var(--espresso), var(--linen));
+    position: relative;
+
+    .gen-close-button {
+      position: absolute;
+      top: 24px;
+      right: 16px;
+    }
 
     .settings-title {
       margin: 0;
       text-align: center;
       color: inherit;
+      margin-bottom: 20px;
     }
 
     .settings-content {

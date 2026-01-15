@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router";
 import { Divider, Flex, Modal, Switch, Typography } from "antd";
 import useStore from "@/store/store";
 import WordLengthSetting from "./components/WordLengthSetting/WordLengthSetting";
+import GenCloseButton from "@/libs/ui/components/GenCloseButton/GenCloseButton";
 import clsx from "clsx";
 import "./settings-page.style.css";
 
@@ -37,6 +38,7 @@ const SettingsPage = () => {
     <Modal open={isSettingsOpen} onCancel={handleCloseModal} footer={null}>
       <div className="settings-page">
         <Flex className={clsx("settings-container", "theme", theme)} vertical>
+          <GenCloseButton onClose={handleCloseModal} size="small" />
           <Title level={2} className="settings-title">
             Settings
           </Title>
