@@ -2,7 +2,8 @@ name: Gemini Code Reviewer
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    # Trigger on everything for now to force the check to show up
+    types: [opened, synchronize, reopened]
 
 jobs:
   review:
@@ -15,18 +16,41 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Get full history for the diff
 
-      - name: Google Gemini Code Review
-        uses: google-gemini/gemini-github-action@v1
+      - name: Get PR Diff
+        run: |
+          # Fetch the base branch so git can compare
+          git fetch origin ${{ github.base_ref }}
+          git diff origin/${{ github.base_ref }}...HEAD > pr_diff.txt
+          # Display the first few lines in logs for debugging
+          echo "Diff captured. Size: $(wc -c < pr_diff.txt) bytes"
+
+      - name: Call Gemini API
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          # We use a simple python script or curl to avoid CLI versioning issues
+          # This constructs a JSON payload with your diff
+          DIFF_CONTENT=$(cat pr_diff.txt | head -c 10000 | jq -Rs .)
+
+          curl https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }} \
+              -H 'Content-Type: application/json' \
+              -X POST \
+              -d "{
+                \"contents\": [{
+                  \"parts\":[{
+                    \"text\": \"Review this React code diff for logic errors and state issues. Be concise: $DIFF_CONTENT\"
+                  }]
+                }]
+              }" > gemini_response.json
+
+      - name: Process Response and Comment
+        run: |
+          # Extract the text from the Gemini JSON response
+          cat gemini_response.json | jq -r '.candidates[0].content.parts[0].text' > review_comment.txt
+
+      - name: Post Comment
+        uses: thollander/actions-comment-pull-request@v2
         with:
-          apiKey: ${{ secrets.GEMINI_API_KEY }}
-          model: "gemini-1.5-flash" # Using Flash to stay within your free quota
-          instructions: |
-            You are a Senior React/TypeScript Developer. 
-            Review this Pull Request for:
-            1. Unnecessary Use of State (Suggest Derived State).
-            2. Hardcoded values that should be Constants.
-            3. Logic bugs in the Wordle game mechanics (especially double-letter handling).
-            4. React Performance (unnecessary re-renders).
-            Please explain your suggestions like a mentor teaching a student.
+          filePath: review_comment.txt
