@@ -55,15 +55,15 @@ const Keyboard: FC<KeyboardProps> = ({ onType, guesses, board }) => {
       )
       .map((tile: TileType) => tile.status);
 
-    // Priority Logic: Absent/Correct take precedence over Present
-    if (charStatuses.includes(TILE_STATUS.ABSENT)) {
-      return TILE_STATUS.ABSENT;
-    }
+    // Priority Logic: Correct/Present take precedence over Absent
     if (charStatuses.includes(TILE_STATUS.CORRECT)) {
       return TILE_STATUS.CORRECT;
     }
     if (charStatuses.includes(TILE_STATUS.PRESENT)) {
       return TILE_STATUS.PRESENT;
+    }
+    if (charStatuses.includes(TILE_STATUS.ABSENT)) {
+      return TILE_STATUS.ABSENT;
     }
 
     // Deafault
