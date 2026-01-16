@@ -9,7 +9,6 @@ const AppRoutes = () => {
 function App() {
   return (
     <Router>
-      <span>test</span>
       <MainLayout>
         <AppRoutes />
       </MainLayout>
