@@ -1,32 +1,33 @@
-name: Gemini Code Reviewer
+- name: Run AI Review
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          # Sanitize the diff: remove quotes and backslashes that break JSON
+          CLEAN_DIFF=$(cat compact_diff.txt | jq -Rs .)
 
-on:
-  pull_request:
-    types: [opened, synchronize]
+          # Call the API directly
+          curl https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }} \
+              -H 'Content-Type: application/json' \
+              -X POST \
+              -d "{
+                \"contents\": [{
+                  \"parts\":[{
+                    \"text\": \"Review these React code changes. Provide a bulleted list of logic or state issues. If it looks good, say LGTM. DIFF: $CLEAN_DIFF\"
+                  }]
+                }]
+              }" > response.json
+          
+          # Debug: Show the response in logs so we can see errors
+          cat response.json
 
-jobs:
-  review:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
+      - name: Post Comment
+        run: |
+          # Extract the text and handle potential nulls
+          # This looks for the specific path in the Gemini JSON response
+          MESSAGE=$(jq -r '.candidates[0].content.parts[0].text // "AI could not generate a review (Quota or Safety filter hit)."' response.json)
+          echo "$MESSAGE" > review_comment.txt
 
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
         with:
-          fetch-depth: 0
-
-      - name: Google Gemini Code Review
-        uses: google-gemini/gemini-github-action@v1
-        with:
-          apiKey: ${{ secrets.GEMINI_API_KEY }}
-          model: "gemini-1.5-flash" # Using Flash to stay within your free quota
-          instructions: |
-            You are a Senior React/TypeScript Developer. 
-            Review this Pull Request for:
-            1. Unnecessary Use of State (Suggest Derived State).
-            2. Hardcoded values that should be Constants.
-            3. Logic bugs in the Wordle game mechanics (especially double-letter handling).
-            4. React Performance (unnecessary re-renders).
-            Please explain your suggestions like a mentor teaching a student.
+          filePath: review_comment.txt
