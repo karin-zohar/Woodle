@@ -1,33 +1,53 @@
-- name: Run AI Review
+name: Gemini Reviewer
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  gemini-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Code Diff
+        id: diff
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          git diff origin/${{ github.base_ref }}...HEAD > pr_diff.txt
+          head -c 8000 pr_diff.txt > compact_diff.txt
+
+      - name: Run AI Review
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          # Sanitize the diff: remove quotes and backslashes that break JSON
-          CLEAN_DIFF=$(cat compact_diff.txt | jq -Rs .)
+          # Safely escape the diff for JSON using jq
+          DIFF_JSON=$(jq -Rs . < compact_diff.txt)
 
-          # Call the API directly
+          # Use curl for the direct API call
           curl https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }} \
-              -H 'Content-Type: application/json' \
-              -X POST \
-              -d "{
-                \"contents\": [{
-                  \"parts\":[{
-                    \"text\": \"Review these React code changes. Provide a bulleted list of logic or state issues. If it looks good, say LGTM. DIFF: $CLEAN_DIFF\"
-                  }]
+            -H 'Content-Type: application/json' \
+            -X POST \
+            -d "{
+              \"contents\": [{
+                \"parts\":[{
+                  \"text\": \"Review this React code diff for logic errors and state management bugs. Provide a concise bulleted list. If no issues, say LGTM. DIFF: $DIFF_JSON\"
                 }]
-              }" > response.json
-          
-          # Debug: Show the response in logs so we can see errors
-          cat response.json
+              }]
+            }" > response.json
+
+          # Extract text or error message
+          jq -r '.candidates[0].content.parts[0].text // "Error: Check logs for API response"' response.json > review_comment.txt
 
       - name: Post Comment
-        run: |
-          # Extract the text and handle potential nulls
-          # This looks for the specific path in the Gemini JSON response
-          MESSAGE=$(jq -r '.candidates[0].content.parts[0].text // "AI could not generate a review (Quota or Safety filter hit)."' response.json)
-          echo "$MESSAGE" > review_comment.txt
-
-      - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
         with:
           filePath: review_comment.txt
