@@ -3,9 +3,18 @@ name: Gemini Code Reviewer
 on:
   pull_request:
     types: [opened, synchronize]
+    # 1. PATH FILTERING: Only spend tokens when actual code changes
+    paths:
+      - "src/**"
+      - "**.js"
+      - "**.jsx"
+      - "**.ts"
+      - "**.tsx"
 
 jobs:
   review:
+    # 2. DRAFT CHECK: Skip draft PRs to avoid wasting quota on unfinished work
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -15,13 +24,27 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          # Pull enough history to calculate a diff
+          fetch-depth: 2
+
+      - name: Extract Diff
+        id: diff
+        run: |
+          # 3. CONTEXT CAPTURE: Get the changes between base and current head
+          git diff origin/${{ github.base_ref }}...HEAD > pr_diff.txt
+          # Limit diff to 8,000 chars to strictly stay within Free Tier limits
+          head -c 8000 pr_diff.txt > compact_diff.txt
 
       - name: Gemini AI Review
-        # We are using the most stable version of the runner
         uses: google-github-actions/run-gemini-cli@v0
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
           gemini_model: "gemini-1.5-flash"
-          # Instead of /review, we use a single-line prompt to avoid multiline output issues
-          prompt: "Review the code changes in this PR. Identify logic errors or React state issues. Output your feedback as a simple bulleted list."
+          # 4. PROMPT INJECTION: Feed the actual code diff into the AI
+          prompt: |
+            Review these React/JavaScript code changes for logic errors, state management bugs, or performance issues.
+            Output your feedback as a simple bulleted list. 
+            If everything looks good, just respond with "LGTM".
+
+            CODE DIFF:
+            $(cat compact_diff.txt)
