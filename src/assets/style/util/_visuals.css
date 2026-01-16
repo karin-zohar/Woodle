@@ -23,7 +23,10 @@
     color: light-dark(var(--espresso), var(--white));
     border-color: var(--espresso);
   }
+}
 
+.tile,
+.keyboard .keyboard-row button.keyboard-key.ant-btn {
   &.gray {
     background-color: var(--tile-gray);
   }

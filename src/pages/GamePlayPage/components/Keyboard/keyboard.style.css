@@ -19,6 +19,9 @@
       background-color: light-dark(var(--desert-sand), var(--toffee-brown));
       border: 2px solid light-dark(var(--desert-sand), var(--toffee-brown));
 
+      &:not(.editing) {
+        color: var(--white);
+      }
       &:hover {
         border-color: light-dark(var(--toffee-brown), var(--linen));
       }
