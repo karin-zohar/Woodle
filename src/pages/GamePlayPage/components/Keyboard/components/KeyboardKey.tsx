@@ -1,3 +1,4 @@
+import type { TileStatusValue } from "@/libs/hooks/useGame";
 import { Button } from "antd";
 import clsx from "clsx";
 import { type FC, type ReactNode } from "react";
@@ -6,7 +7,7 @@ type KeyboardKeyProps = {
   onType: (key: string) => void;
   value: string;
   label?: ReactNode;
-  status: string;
+  status: TileStatusValue;
 };
 
 const KeyboardKey: FC<KeyboardKeyProps> = ({

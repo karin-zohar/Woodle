@@ -3,7 +3,11 @@ import "./keyboard.style.css";
 import { Flex } from "antd";
 import KeyboardKey from "./components/KeyboardKey";
 import { BackspaceIcon } from "@/libs/ui/icons";
-import { TILE_STATUS, type TileRowType } from "@/libs/hooks/useGame";
+import {
+  TILE_STATUS,
+  type TileRowType,
+  type TileStatusValue,
+} from "@/libs/hooks/useGame";
 
 type KeyboardProps = {
   onType: (key: string) => void;
@@ -30,7 +34,7 @@ const Keyboard: FC<KeyboardProps> = ({ onType, board }) => {
   }, [onType]);
 
   const keyStatusMap = useMemo(() => {
-    const statusMap: Record<string, string> = {};
+    const statusMap: Record<string, TileStatusValue> = {};
 
     board.forEach((row) => {
       row.tiles.forEach((tile) => {
