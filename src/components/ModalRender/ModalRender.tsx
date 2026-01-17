@@ -2,6 +2,7 @@ import { useLocation } from "react-router";
 import useStore from "@/store/store";
 import GenModal from "@/libs/ui/components/GenModal/GenModal";
 import SettingsModal from "../modals/SettingsModal/SettingsModal";
+import ChangeLevelModal from "../modals/ChangeLevelModal/ChangeLevelModal";
 
 const MODAL_CONFIGS = [
   {
@@ -14,8 +15,8 @@ const MODAL_CONFIGS = [
   {
     key: "end-game",
     queryParam: "end-game",
-    title: "This action will end the current game",
-    content: <div>Are you sure you want to end this game?</div>,
+    title: "End current game?",
+    content: <ChangeLevelModal />,
   },
 ];
 

@@ -10,7 +10,7 @@ const { Title } = Typography;
 
 export interface GenModalProps extends ModalProps {
   queryParam: string;
-  title: string;
+  title?: string;
   theme?: string;
   children: ReactNode;
   className?: string;
