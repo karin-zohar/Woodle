@@ -1,0 +1,36 @@
+.gen-modal {
+  display: flex;
+  justify-content: center;
+  background-color: transparent;
+
+  .gen-modal-inner-container {
+    background-color: light-dark(var(--desert-sand), var(--toffee-brown));
+    height: 400px;
+    width: 300px;
+    border: 3px solid light-dark(var(--espresso), var(--linen));
+    border-radius: 20px;
+    box-shadow: var(--box-shadow);
+    padding: 24px 16px;
+    justify-content: center;
+    color: light-dark(var(--espresso), var(--linen));
+    position: relative;
+
+    .gen-close-button {
+      position: absolute;
+      top: 24px;
+      right: 16px;
+    }
+
+    .gen-modal-inner-title {
+      margin: 0;
+      text-align: center;
+      color: inherit;
+      margin-bottom: 20px;
+    }
+
+    .gen-modal-inner-content {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+}

@@ -35,7 +35,7 @@ export const useGame = (): UseGameReturn => {
               status: isFinished ? rowStatuses[charIndex] : TILE_STATUS.EDITING,
             })),
         };
-      }
+      },
     );
   }, [guesses, currentGuess, gameSettings]);
 
@@ -62,7 +62,7 @@ export const useGame = (): UseGameReturn => {
       const result = getKeyboardAction(
         key,
         currentGuess,
-        gameSettings.wordLength
+        gameSettings.wordLength,
       );
 
       switch (result.action) {
@@ -88,7 +88,7 @@ export const useGame = (): UseGameReturn => {
           break;
       }
     },
-    [currentGuess, gameSettings.wordLength, submitGuess]
+    [currentGuess, gameSettings.wordLength, submitGuess],
   );
 
   return {
