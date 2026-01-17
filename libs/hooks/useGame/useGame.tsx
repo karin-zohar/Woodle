@@ -14,7 +14,7 @@ export const useGame = (): UseGameReturn => {
 
   // TODO: memoize board
   const board = useMemo(() => {
-    return Array.from({ length: gameSettings.wordLength }).map(
+    return Array.from({ length: gameSettings.wordLength + 1 }).map(
       (_, rowIndex) => {
         const word =
           guesses[rowIndex] ||

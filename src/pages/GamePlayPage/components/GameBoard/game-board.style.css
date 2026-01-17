@@ -1,5 +1,6 @@
 .game-board {
   height: fit-content;
+  max-height: 400px;
   max-width: calc(100vw - 30px);
   border-radius: 20px;
   box-shadow: var(--box-shadow);
@@ -16,6 +17,13 @@
       display: flex;
       gap: 5px;
       justify-content: center;
+    }
+  }
+
+  &.large {
+    .tile {
+      height: 44px;
+      width: 44px;
     }
   }
 }

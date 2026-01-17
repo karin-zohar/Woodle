@@ -1,15 +1,17 @@
 .main-layout {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   height: 100vh;
   main {
-    margin-top: 30px;
+    flex: 1;
     max-height: 100%;
     overflow: auto;
+    padding-block: 30px;
     display: grid;
-    grid-template-columns: minmax(20px, 1fr) minmax(
-        250px,
-        var(--max-content-width)
-      ) minmax(20px, 1fr);
+    grid-template-columns:
+      minmax(20px, 1fr) minmax(250px, var(--max-content-width))
+      minmax(20px, 1fr);
     > * {
       grid-column: 2;
     }
