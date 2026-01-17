@@ -20,6 +20,7 @@ const KeyboardKey: FC<KeyboardKeyProps> = ({
     <Button
       className={clsx("keyboard-key", status)}
       onClick={() => onType(value)}
+      aria-label={typeof label === "string" ? label : value}
     >
       {label ?? value}
     </Button>
