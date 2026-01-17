@@ -21,19 +21,22 @@ jobs:
       - name: Get Code Diff
         id: diff
         run: |
+          # Fetch the base branch to compare against
           git fetch origin ${{ github.base_ref }}
+          # Generate the diff and limit to the first 10,000 characters to prevent payload bloat
           git diff origin/${{ github.base_ref }}...HEAD > pr_diff.txt
-          head -c 8000 pr_diff.txt > compact_diff.txt
+          head -c 10000 pr_diff.txt > compact_diff.txt
 
       - name: Run AI Review
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
+          # 1. Prepare the prompt and diff content
           DIFF_CONTENT=$(cat compact_diff.txt)
           PROMPT_TEXT="Review this React code diff for logic errors and state management bugs. Provide a concise bulleted list. If no issues, say LGTM. DIFF: $DIFF_CONTENT"
 
-          # 1. Build Payload with Safety Settings set to BLOCK_ONLY_HIGH
-          # This prevents the "Safety Block" that often triggers on code snippets.
+          # 2. Use jq to build a safe JSON payload with safety settings
+          # We use gemini-2.0-flash as it is the current standard for v1beta
           PAYLOAD=$(jq -n --arg msg "$PROMPT_TEXT" '{
             contents: [{parts: [{text: $msg}]}],
             safetySettings: [
@@ -44,21 +47,23 @@ jobs:
             ]
           }')
 
-          # 2. Call the API
-          curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY" \
+          # 3. Call the Gemini API
+          curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY" \
             -H 'Content-Type: application/json' \
             -d "$PAYLOAD" > response.json
 
-          # 3. Check for valid response
+          # 4. Process the response
           if jq -e '.candidates[0].content.parts[0].text' response.json > /dev/null; then
             jq -r '.candidates[0].content.parts[0].text' response.json > review_comment.txt
           else
-            echo "❌ API Failure. Check full response below:"
+            echo "❌ API Error Detected"
             cat response.json
             
-            # Extract specific error message if available
-            ERROR_MSG=$(jq -r '.error.message // .candidates[0].finishReason // "Unknown Error"' response.json)
-            echo "Gemini Error: $ERROR_MSG. Check Action logs for full JSON." > review_comment.txt
+            # Extract error message or finish reason (like SAFETY or QUOTA)
+            ERROR_MSG=$(jq -r '.error.message // .candidates[0].finishReason // "Unknown API Error"' response.json)
+            echo "### 🤖 Gemini Reviewer Notice" > review_comment.txt
+            echo "Could not generate review. Reason: **$ERROR_MSG**" >> review_comment.txt
+            echo "Please check the [GitHub Action logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for the full JSON response." >> review_comment.txt
           fi
 
       - name: Post Comment
