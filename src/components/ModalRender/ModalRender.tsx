@@ -11,6 +11,12 @@ const MODAL_CONFIGS = [
     className: "settings-modal",
     content: <SettingsModal />,
   },
+  {
+    key: "end-game",
+    queryParam: "end-game",
+    title: "This action will end the current game",
+    content: <div>Are you sure you want to end this game?</div>,
+  },
 ];
 
 const ModalRender = () => {
@@ -18,24 +24,29 @@ const ModalRender = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
-  const activeModal = MODAL_CONFIGS.find(
+  // Filter the configs to get all that are currently active in the URL
+  const activeModals = MODAL_CONFIGS.filter(
     (config) => queryParams.get(config.queryParam) === "true",
   );
 
-  if (!activeModal) {
+  if (activeModals.length === 0) {
     return null;
   }
 
   return (
-    <GenModal
-      key={activeModal.key}
-      queryParam={activeModal.queryParam}
-      title={activeModal.title}
-      theme={theme}
-      className={activeModal.className}
-    >
-      {activeModal.content}
-    </GenModal>
+    <>
+      {activeModals.map((modal) => (
+        <GenModal
+          key={modal.key}
+          queryParam={modal.queryParam}
+          title={modal.title}
+          theme={theme}
+          className={modal.className}
+        >
+          {modal.content}
+        </GenModal>
+      ))}
+    </>
   );
 };
 
