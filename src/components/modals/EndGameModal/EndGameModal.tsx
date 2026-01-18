@@ -26,14 +26,19 @@ const EndGameModal = () => {
       </span>
 
       <Flex gap={16} justify="center">
-        <Button onClick={() => handleChoice(false)} size="large">
+        <Button
+          className="woodle-button"
+          onClick={() => handleChoice(false)}
+          size="middle"
+        >
           Continue Game
         </Button>
         <Button
+          className="woodle-button"
           onClick={() => handleChoice(true)}
-          type="primary"
+          type={"primary"}
           danger
-          size="large"
+          size="middle"
         >
           End Game
         </Button>
