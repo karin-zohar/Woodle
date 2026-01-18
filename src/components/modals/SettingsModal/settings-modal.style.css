@@ -5,6 +5,12 @@
   letter-spacing: 1px;
   width: 100%;
 
+  &.setting-theme {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
   &.setting-word-length {
     align-items: center;
     .ant-radio-wrapper {

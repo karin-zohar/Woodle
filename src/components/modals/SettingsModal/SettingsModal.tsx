@@ -12,10 +12,10 @@ const SettingsModal = () => {
 
   return (
     <>
-      <Flex className="setting setting-theme" align="center" gap={20}>
+      <label className="setting setting-theme">
         <Switch checked={theme === "light"} onChange={onChangeTheme} />
         <span style={{ textTransform: "capitalize" }}>{`${theme} theme`}</span>
-      </Flex>
+      </label>
 
       <Divider />
       <WordLengthSetting />
