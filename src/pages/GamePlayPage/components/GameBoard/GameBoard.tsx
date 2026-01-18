@@ -8,7 +8,7 @@ import useStore from "@/store/store";
 const GameBoard: FC<GameBoardProps> = ({ rows }) => {
   const { gameSettings } = useStore();
   const { wordLength } = gameSettings;
-  const boardSize = wordLength === 7 ? "large" : "regular";
+  const boardSize = wordLength > 5 ? "large" : "regular";
 
   return (
     <div className={clsx("game-board", "wood-grain", boardSize)}>

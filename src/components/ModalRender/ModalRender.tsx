@@ -2,7 +2,7 @@ import { useLocation } from "react-router";
 import useStore from "@/store/store";
 import GenModal from "@/libs/ui/components/GenModal/GenModal";
 import SettingsModal from "../modals/SettingsModal/SettingsModal";
-import ChangeLevelModal from "../modals/ChangeLevelModal/ChangeLevelModal";
+import EndGameModal from "../modals/EndGameModal/EndGameModal";
 
 const MODAL_CONFIGS = [
   {
@@ -16,7 +16,7 @@ const MODAL_CONFIGS = [
     key: "end-game",
     queryParam: "end-game",
     title: "End current game?",
-    content: <ChangeLevelModal />,
+    content: <EndGameModal />,
   },
 ];
 
@@ -27,7 +27,7 @@ const ModalRender = () => {
 
   // Filter the configs to get all that are currently active in the URL
   const activeModals = MODAL_CONFIGS.filter(
-    (config) => queryParams.get(config.queryParam) === "true",
+    (config) => queryParams.get(config.queryParam) === "true"
   );
 
   if (activeModals.length === 0) {
