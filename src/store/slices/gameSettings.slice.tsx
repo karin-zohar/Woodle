@@ -23,6 +23,7 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => ({
   setWordLength: (wordLength: WordLength) => {
     set((state) => ({
       gameSettings: { ...state.gameSettings, wordLength },
+      //TODO: fetch new solution after wordLength change
     }));
   },
   setSolution: (solution: string) => {

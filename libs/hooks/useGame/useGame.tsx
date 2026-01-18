@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { UseGameReturn } from "./useGame.type";
 import { calculateRowStatus, getKeyboardAction } from "./useGame.util";
 import { TILE_STATUS } from "./useGame.type";
@@ -11,6 +11,11 @@ export const useGame = (): UseGameReturn => {
   // Board
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
+
+  useEffect(() => {
+    setGuesses([]);
+    setCurrentGuess("");
+  }, [gameSettings.wordLength, gameSettings.solution]);
 
   // TODO: memoize board
   const board = useMemo(() => {
@@ -35,9 +40,9 @@ export const useGame = (): UseGameReturn => {
               status: isFinished ? rowStatuses[charIndex] : TILE_STATUS.EDITING,
             })),
         };
-      },
+      }
     );
-  }, [guesses, currentGuess, gameSettings]);
+  }, [guesses, currentGuess, gameSettings.solution, gameSettings.wordLength]);
 
   const addGuess = () => {
     if (currentGuess.length === gameSettings.wordLength) {
@@ -62,7 +67,7 @@ export const useGame = (): UseGameReturn => {
       const result = getKeyboardAction(
         key,
         currentGuess,
-        gameSettings.wordLength,
+        gameSettings.wordLength
       );
 
       switch (result.action) {
@@ -88,7 +93,7 @@ export const useGame = (): UseGameReturn => {
           break;
       }
     },
-    [currentGuess, gameSettings.wordLength, submitGuess],
+    [currentGuess, gameSettings.wordLength, submitGuess]
   );
 
   return {
