@@ -78,37 +78,6 @@ body {
     background-color: var(--toffee-brown);
   }
 
-  .ant-switch {
-    border: 2px solid light-dark(var(--toffee-brown), var(--linen));
-    box-shadow: var(--box-shadow);
-    &:disabled {
-      background-color: light-dark(var(--gray-500), var(--gray-400));
-      border-color: var(--gray-600);
-    }
-
-    .ant-switch-handle {
-      transform: scale(50%);
-      margin-block: -2px;
-    }
-    &:hover:not(.ant-switch-disabled) {
-      transform: rotate(25deg);
-    }
-    &.ant-switch-checked {
-      background-color: var(--tile-green);
-      .ant-switch-handle {
-        transform: scale(80%);
-      }
-
-      &:hover:not(.ant-switch-disabled) {
-        transform: rotate(-25deg);
-        background-color: var(--tile-green);
-        .ant-switch-handle {
-          transform: scale(70%);
-        }
-      }
-    }
-  }
-
   .ant-modal .ant-modal-container {
     background-color: transparent;
     box-shadow: none;
