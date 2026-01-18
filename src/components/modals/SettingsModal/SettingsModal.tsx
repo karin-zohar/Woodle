@@ -1,5 +1,5 @@
 import useStore from "@/store/store";
-import { Divider, Flex, Switch } from "antd";
+import { Divider, Switch } from "antd";
 import WordLengthSetting from "./components/WordLengthSetting/WordLengthSetting";
 import "./settings-modal.style.css";
 
