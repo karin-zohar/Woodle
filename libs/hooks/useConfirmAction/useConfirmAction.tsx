@@ -1,10 +1,15 @@
-const useConfirmAction = () => {
+type UseConfirmActionProps = {
+  eventName: string;
+};
+
+const useConfirmAction = ({ eventName }: UseConfirmActionProps) => {
   const confirm = (onConfirm: () => void) => {
     const handler = () => {
       onConfirm();
-      window.removeEventListener("CONFIRM_END_GAME", handler);
+      window.removeEventListener(eventName, handler);
     };
-    window.addEventListener("CONFIRM_END_GAME", handler, { once: true });
+
+    window.addEventListener(eventName, handler, { once: true });
   };
 
   return { confirm };

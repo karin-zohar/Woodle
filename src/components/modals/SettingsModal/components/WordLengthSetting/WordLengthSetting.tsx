@@ -10,7 +10,7 @@ const VALID_WORD_LENGTHS = [5, 6, 7];
 const WordLengthSetting = () => {
   const { gameSettings, setWordLength } = useStore();
   const { openModal } = useModal();
-  const { confirm } = useConfirmAction();
+  const { confirm } = useConfirmAction({ eventName: "CONFIRM_END_GAME" });
 
   const handleChange = (e: RadioChangeEvent) => {
     const nextValue = e.target.value;
@@ -25,7 +25,7 @@ const WordLengthSetting = () => {
     (length) => ({
       label: <WordLengthSettingOption value={length} />,
       value: length,
-    })
+    }),
   );
 
   return (
