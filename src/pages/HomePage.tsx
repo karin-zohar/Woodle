@@ -22,7 +22,14 @@ const HomePage = () => {
     <div className="home-page">
       <Title level={1}>{header}</Title>
       <Title level={2}>{subheader}</Title>
-      <Button onClick={() => navigate("/play")}>{buttonContent}</Button>
+      <Button
+        size="large"
+        className="woodle-button"
+        onClick={() => navigate("/play")}
+        type={"primary"}
+      >
+        {buttonContent}
+      </Button>
     </div>
   );
 };

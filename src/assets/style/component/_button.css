@@ -1,0 +1,35 @@
+button.ant-btn {
+  &.woodle-button {
+    font-family: RobotoMono, Arial;
+    background-color: light-dark(var(--desert-sand), var(--toffee-brown));
+    color: light-dark(var(--espresso), var(--linen));
+
+    &.ant-btn-variant-outlined.ant-btn-color-default {
+      border: 2px solid light-dark(var(--espresso), var(--linen));
+      &:active,
+      &:hover {
+        background-color: light-dark(var(--espresso), var(--linen));
+        border-color: light-dark(var(--espresso), var(--linen));
+        color: light-dark(var(--linen), var(--espresso));
+      }
+    }
+
+    &.ant-btn-variant-solid {
+      background-color: light-dark(var(--desert-sand), var(--toffee-brown));
+      color: light-dark(var(--espresso), var(--linen));
+      &:hover {
+        background-color: var(--golden-chestnut);
+      }
+    }
+
+    &.ant-btn-color-dangerous {
+      background-color: var(--brick-red);
+      color: var(--linen);
+      &:active,
+      &:hover {
+        transition: 0.5s;
+        background-color: var(--berry-red);
+      }
+    }
+  }
+}

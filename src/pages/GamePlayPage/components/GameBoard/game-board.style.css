@@ -22,8 +22,8 @@
 
   &.large {
     .tile {
-      height: 44px;
-      width: 44px;
+      height: 42px;
+      width: 42px;
     }
   }
 }

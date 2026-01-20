@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { HomeIcon, QuestionIcon, SettingsIcon } from "@/libs/ui/icons";
 import { Menu, type MenuProps } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
+import useModal from "@/libs/hooks/useModal/useModal";
 
 type NavMenuProps = {
   layout: "horizontal" | "vertical";
@@ -11,6 +12,7 @@ type NavMenuProps = {
 type MenuItem = Required<MenuProps>["items"][number];
 
 const NavMenu: FC<NavMenuProps> = ({ layout, closeDrawer }) => {
+  const { openModal } = useModal();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -34,13 +36,7 @@ const NavMenu: FC<NavMenuProps> = ({ layout, closeDrawer }) => {
 
   const handleItemClick: MenuProps["onClick"] = ({ key }) => {
     if (key === "/settings") {
-      const params = new URLSearchParams(location.search);
-      params.set("settings", "true");
-
-      navigate({
-        pathname: location.pathname,
-        search: params.toString(),
-      });
+      openModal("settings");
     } else {
       navigate(key);
     }

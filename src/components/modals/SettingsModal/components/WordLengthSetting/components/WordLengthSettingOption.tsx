@@ -9,7 +9,11 @@ const WordLengthSettingOption: FC<WordLengthSettingOptionProp> = ({
   value,
 }) => {
   return (
-    <Flex className="word-length-setting-option" gap={20}>
+    <Flex
+      className="word-length-setting-option"
+      gap={20}
+      aria-label={`Select word length - ${value} characters`}
+    >
       <span>{`${value} characters`}</span>
       <Flex gap={5} className="tiles">
         {Array.from({ length: value }).map((_, idx) => (
