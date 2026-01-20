@@ -15,7 +15,6 @@ const MODAL_CONFIGS = [
   {
     key: "end-game",
     queryParam: "end-game",
-    title: "End current game?",
     content: <EndGameModal />,
   },
 ];

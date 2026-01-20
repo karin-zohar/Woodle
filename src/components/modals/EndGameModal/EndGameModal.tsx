@@ -22,7 +22,7 @@ const EndGameModal = () => {
       gap={20}
     >
       <span style={{ textAlign: "center" }}>
-        Are you sure you want to end the current Game?
+        Are you sure you want to end the current game?
       </span>
 
       <Flex gap={16} justify="center">
@@ -36,7 +36,7 @@ const EndGameModal = () => {
         <Button
           className="woodle-button"
           onClick={() => handleChoice(true)}
-          type={"primary"}
+          type="primary"
           danger
           size="middle"
         >
