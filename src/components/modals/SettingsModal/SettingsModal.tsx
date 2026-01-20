@@ -14,7 +14,7 @@ const SettingsModal = () => {
     <>
       <label className="setting setting-theme">
         <Switch checked={theme === "light"} onChange={onChangeTheme} />
-        <span style={{ textTransform: "capitalize" }}>{`${theme} theme`}</span>
+        <span>{`${theme} theme`}</span>
       </label>
 
       <Divider />
