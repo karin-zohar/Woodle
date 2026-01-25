@@ -18,6 +18,7 @@ button.ant-btn {
       background-color: light-dark(var(--desert-sand), var(--toffee-brown));
       color: light-dark(var(--espresso), var(--linen));
       &:hover {
+        transition: 0.4s;
         background-color: var(--golden-chestnut);
       }
     }
