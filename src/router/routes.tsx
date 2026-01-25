@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { type RouteObject } from "react-router";
 
-const HomePage = lazy(async () => await import("@/pages/HomePage"));
+const HomePage = lazy(async () => await import("@/pages/HomePage/HomePage"));
 const GamePlayPage = lazy(
   async () => await import("@/pages/GamePlayPage/GamePlayPage")
 );

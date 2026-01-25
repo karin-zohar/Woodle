@@ -5,8 +5,8 @@
   height: 100vh;
   main {
     flex: 1;
-    max-height: 100%;
-    overflow: auto;
+    height: 100%;
+    overflow: hidden;
     padding-block: 30px;
     display: grid;
     grid-template-columns:
