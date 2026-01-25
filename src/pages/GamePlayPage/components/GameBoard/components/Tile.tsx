@@ -11,5 +11,4 @@ const Tile: FC<TileType> = ({ status, content }) => {
   );
 };
 
-// Use memo here
 export default memo(Tile);
