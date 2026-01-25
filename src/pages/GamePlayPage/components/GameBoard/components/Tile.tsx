@@ -1,13 +1,14 @@
+import { memo } from "react";
+import type { FC } from "react";
 import type { TileType } from "@/libs/hooks/useGame";
 import clsx from "clsx";
-import type { FC } from "react";
 
 const Tile: FC<TileType> = ({ status, content }) => {
   return (
     <div className={clsx("tile", status)}>
-      {content ?? <span>{content}</span>}
+      {content}
     </div>
   );
 };
 
-export default Tile;
+export default memo(Tile);
