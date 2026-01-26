@@ -1,7 +1,8 @@
 import type { TileStatusValue } from "@/libs/hooks/useGame";
 import { Button } from "antd";
 import clsx from "clsx";
-import { type FC, type ReactNode } from "react";
+import type {  FC, ReactNode } from "react";
+import { memo } from "react";
 
 type KeyboardKeyProps = {
   onType: (key: string) => void;
@@ -27,4 +28,4 @@ const KeyboardKey: FC<KeyboardKeyProps> = ({
   );
 };
 
-export default KeyboardKey;
+export default memo(KeyboardKey);

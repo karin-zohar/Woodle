@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import { memo } from "react";
 import Tile from "./Tile";
 import type { TileRowType, TileType } from "@/libs/hooks/useGame";
 
@@ -12,4 +13,4 @@ const TileRow: FC<TileRowType> = ({ tiles }) => {
   );
 };
 
-export default TileRow;
+export default memo(TileRow);
