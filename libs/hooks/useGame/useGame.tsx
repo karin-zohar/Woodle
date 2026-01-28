@@ -3,8 +3,11 @@ import type { UseGameReturn } from "./useGame.type";
 import { calculateRowStatus, getKeyboardAction } from "./useGame.util";
 import { TILE_STATUS } from "./useGame.type";
 import useStore from "@/store/store";
+import useToast from "../useToast/useToast";
+import dispatchCustomEvent from '@/libs/helpers/dispatchCustomEvent'
 
 export const useGame = (): UseGameReturn => {
+  const { showToast } = useToast()
   // Settings
   const { gameSettings } = useStore();
 
@@ -16,6 +19,18 @@ export const useGame = (): UseGameReturn => {
     setGuesses([]);
     setCurrentGuess("");
   }, [gameSettings.wordLength, gameSettings.solution]);
+
+  useEffect(() => {
+    const handleSubmitWordTooShort = () => {
+      showToast('info', 'Word is too short!')
+    }
+    window.addEventListener('submit-word-too-short', handleSubmitWordTooShort)
+
+    return () => {
+      window.removeEventListener('submit-word-too-short', handleSubmitWordTooShort);
+    }
+
+  }, [currentGuess, gameSettings.solution])
 
   // TODO: memoize board
   const board = useMemo(() => {
@@ -76,6 +91,7 @@ export const useGame = (): UseGameReturn => {
             submitGuess();
           } else {
             console.log("Word too short!");
+            dispatchCustomEvent('submit-word-too-short');
             // TODO: trigger a shake animation here.
           }
           break;
