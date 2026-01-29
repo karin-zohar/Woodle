@@ -26,15 +26,25 @@ export const calculateRowStatus = (guess: string, solution: string) => {
   return statuses;
 };
 
+const allowedWordsList = ['trial', 'growl', 'arise']
+
 export const getKeyboardAction = (
   key: string,
   currentGuess: string,
   wordLength: number
 ): ValidationResult => {
   if (key === "Enter") {
+    const invalidReason =
+      currentGuess.length !== wordLength
+        ? ("submit-not-enough-letters" as const)
+        : !allowedWordsList.includes(currentGuess)
+          ? ("submit-not-in-word-list" as const)
+          : undefined;
+
     return {
       action: "SUBMIT",
-      isValid: currentGuess.length === wordLength,
+      isValid: invalidReason === undefined,
+      ...(invalidReason && { invalidReason }),
     };
   }
 

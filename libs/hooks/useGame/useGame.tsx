@@ -3,8 +3,28 @@ import type { UseGameReturn } from "./useGame.type";
 import { calculateRowStatus, getKeyboardAction } from "./useGame.util";
 import { TILE_STATUS } from "./useGame.type";
 import useStore from "@/store/store";
-import useToast from "../useToast/useToast";
+import useToast, { type UseToastReturnType } from "../useToast/useToast";
 import dispatchCustomEvent from '@/libs/helpers/dispatchCustomEvent'
+
+
+type SubmitHandler = (
+  showToast: UseToastReturnType['showToast'],
+  event: CustomEvent
+) => void;
+
+const SUBMIT_HANDLERS: Record<string, SubmitHandler> = {
+  'submit-not-enough-letters': (showToast) => showToast('info', 'Not enough letters'),
+  'submit-not-in-word-list': (showToast) => showToast('info', 'Not in word list'),
+  'game-over-won': (showToast, event) => {
+    const guessesLength = event.detail as number;
+    const messages = ['Genius', 'Magnificent', 'Impressive', 'Splendid', 'Great', 'Phew'];
+    showToast('info', messages[guessesLength - 1] ?? 'Game Over');
+  },
+  'game-over-lost': (showToast, event) => {
+    const solution = event.detail as string;
+    showToast('info', solution);
+  },
+};
 
 export const useGame = (): UseGameReturn => {
   const { showToast } = useToast()
@@ -21,16 +41,18 @@ export const useGame = (): UseGameReturn => {
   }, [gameSettings.wordLength, gameSettings.solution]);
 
   useEffect(() => {
-    const handleSubmitWordTooShort = () => {
-      showToast('info', 'Word is too short!')
-    }
-    window.addEventListener('submit-word-too-short', handleSubmitWordTooShort)
+    const listeners = Object.entries(SUBMIT_HANDLERS).map(([eventName, handler]) => {
+      const listener = (event: Event) => handler(showToast, event as CustomEvent);
+      window.addEventListener(eventName, listener);
+      return { eventName, listener };
+    });
 
     return () => {
-      window.removeEventListener('submit-word-too-short', handleSubmitWordTooShort);
-    }
-
-  }, [currentGuess, gameSettings.solution])
+      listeners.forEach(({ eventName, listener }) => {
+        window.removeEventListener(eventName, listener);
+      });
+    };
+  }, [showToast])
 
   // TODO: memoize board
   const board = useMemo(() => {
@@ -62,8 +84,13 @@ export const useGame = (): UseGameReturn => {
   const addGuess = () => {
     if (currentGuess.length === gameSettings.wordLength) {
       const guess = currentGuess;
-      // validate guess
+      const nextLength = guesses.length + 1;
       setGuesses((prev) => [...prev, guess]);
+      if (currentGuess === gameSettings.solution) {
+        dispatchCustomEvent('game-over-won', nextLength);
+      } else if (nextLength > gameSettings.wordLength) {
+        dispatchCustomEvent('game-over-lost', gameSettings.solution);
+      }
       setCurrentGuess("");
     }
   };
@@ -90,8 +117,7 @@ export const useGame = (): UseGameReturn => {
           if (result.isValid) {
             submitGuess();
           } else {
-            console.log("Word too short!");
-            dispatchCustomEvent('submit-word-too-short');
+            dispatchCustomEvent(result.invalidReason ?? '');
             // TODO: trigger a shake animation here.
           }
           break;

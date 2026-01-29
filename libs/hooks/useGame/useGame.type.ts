@@ -32,6 +32,6 @@ export type UseGameReturn = {
 };
 
 export type ValidationResult =
-  | { action: "TYPE"; isValid: boolean }
-  | { action: "SUBMIT"; isValid: boolean }
+  | { action: "TYPE"; isValid: boolean}
+  | { action: "SUBMIT"; isValid: boolean, invalidReason?: 'submit-not-enough-letters' | 'submit-not-in-word-list'; }
   | { action: "IGNORE" };
