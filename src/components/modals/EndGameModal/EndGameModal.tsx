@@ -1,3 +1,4 @@
+import dispatchCustomEvent from "@/libs/helpers/dispatchCustomEvent";
 import useModal from "@/libs/hooks/useModal/useModal";
 import { Button, Flex } from "antd";
 
@@ -6,9 +7,9 @@ const EndGameModal = () => {
 
   const handleChoice = (shouldEndGame: boolean) => {
     if (shouldEndGame) {
-      window.dispatchEvent(new CustomEvent("CONFIRM_END_GAME"));
+      dispatchCustomEvent("CONFIRM_END_GAME")
     } else {
-      window.dispatchEvent(new CustomEvent("CANCEL_END_GAME"));
+      dispatchCustomEvent("CANCEL_END_GAME")
     }
     closeModal("end-game");
   };
