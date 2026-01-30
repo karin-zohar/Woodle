@@ -13,3 +13,19 @@
     width: 100%;
   }
 }
+
+@keyframes slideY {
+  from {
+    transform: translateY(-200%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pauseAnimation {
+  from,
+  to {
+    transform: translateY(0);
+  }
+}

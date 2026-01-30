@@ -23,10 +23,11 @@ const useToast = (): UseToastReturnType => {
 	const showToast = useCallback(
 		(type: ToastType, text: string) => {
 			messageApi.open({
-				className: 'toast-from-bottom',
+				className: 'gen-toast-wrapper',
 				type,
 				content: <GenToast text={text} type={type} />,
 				icon: removeDefaultIcon,
+				duration: 4,
 			});
 		},
 		[messageApi]

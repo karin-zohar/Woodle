@@ -11,7 +11,7 @@ type GenToastProps = {
 const GenToast: FC<GenToastProps> = ({ text, type }) => {
 
     return (
-        <div className="gen-toast">
+        <div className="gen-toast wood-grain">
             <div className={`gen-toast-message ${type}`}>
                 <span className="gen-toast-message-text">{text}</span>
             </div>

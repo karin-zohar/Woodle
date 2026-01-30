@@ -1,5 +1,59 @@
+.ant-message.ant-message-top:has(.gen-toast-wrapper) {
+    top: 100px !important;
+    z-index: 500;
+
+    .ant-message-notice-wrapper {
+        animation-duration: 0ms !important;
+
+        .ant-message-notice .ant-message-notice-content {
+            background-color: transparent;
+            padding: 0;
+            transform-origin: top center;
+            animation:
+                slideY 0.3s ease-out forwards,
+                pauseAnimation 4s,
+                slideY 0.5s ease-in forwards;
+            animation-direction: normal, normal, reverse;
+            animation-delay: 0s, 4s, 2s;
+        }
+    }
+}
+
 .gen-toast {
-    height: 100px;
-    width: 400px;
-    background-color: red;
+    --metal: linear-gradient(to right,
+            var(--gray-600) 0%, var(--gray-400) 35%, var(--gray-100) 50%,
+            var(--gray-400) 65%, var(--gray-600) 100%);
+    height: 60px;
+    display: flex;
+    width: fit-content;
+    padding: 10px 6px;
+    border-radius: 10px;
+    border: 2px solid var(--golden-chestnut);
+    background-color: var(--golden-chestnut);
+    box-shadow: var(--box-shadow);
+    anchor-name: --toast-body;
+
+    &::before {
+        content: '';
+        position: absolute;
+        position-anchor: --toast-body;
+        bottom: anchor(top);
+        position-area: center;
+        width: 100px;
+        height: 200px;
+        background: var(--metal) 0 0 / 10px 100% no-repeat,
+            var(--metal) right 0 top 0 / 10px 100% no-repeat;
+        z-index: -1;
+    }
+
+    .gen-toast-message {
+        flex: 1;
+        border-radius: 8px;
+        background: linear-gradient(to bottom, var(--desert-sand) 0%, var(--golden-chestnut) 140%);
+        padding: 10px 8px;
+        font-family: RobotoMono, Arial;
+        text-transform: uppercase;
+        color: var(--espresso);
+        border: 2px solid var(--toffee-brown);
+    }
 }
