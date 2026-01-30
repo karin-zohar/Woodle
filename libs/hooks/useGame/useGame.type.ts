@@ -31,7 +31,9 @@ export type UseGameReturn = {
   currentGuess: string;
 };
 
+import { GAME_EVENTS } from '@/libs/constants/gameEvents';
+
 export type ValidationResult =
   | { action: "TYPE"; isValid: boolean}
-  | { action: "SUBMIT"; isValid: boolean, invalidReason?: 'submit-not-enough-letters' | 'submit-not-in-word-list'; }
+  | { action: "SUBMIT"; isValid: boolean, invalidReason?: typeof GAME_EVENTS.SUBMIT_NOT_ENOUGH_LETTERS | typeof GAME_EVENTS.SUBMIT_NOT_IN_WORD_LIST; }
   | { action: "IGNORE" };

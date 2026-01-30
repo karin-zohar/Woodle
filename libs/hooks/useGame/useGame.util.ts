@@ -1,11 +1,12 @@
 import { TILE_STATUS, type ValidationResult } from "./useGame.type";
+import { GAME_EVENTS } from '@/libs/constants/gameEvents';
 
 export const calculateRowStatus = (guess: string, solution: string) => {
   const solutionChars = solution.split("");
   const guessChars = guess.split("");
 
   // Default status: absent
-  const statuses = new Array(5).fill(TILE_STATUS.ABSENT);
+  const statuses = new Array(guess.length).fill(TILE_STATUS.ABSENT);
 
   guessChars.forEach((char, i) => {
     if (char === solutionChars[i]) {
@@ -26,6 +27,7 @@ export const calculateRowStatus = (guess: string, solution: string) => {
   return statuses;
 };
 
+// TODO: Replace with a proper word list loaded from a file, grouped by word length
 const allowedWordsList = ['trial', 'growl', 'arise']
 
 export const getKeyboardAction = (
@@ -41,9 +43,9 @@ export const getKeyboardAction = (
     }
     const invalidReason =
       currentGuess.length !== wordLength
-        ? ("submit-not-enough-letters" as const)
+        ? GAME_EVENTS.SUBMIT_NOT_ENOUGH_LETTERS
         : !allowedWordsList.includes(currentGuess)
-          ? ("submit-not-in-word-list" as const)
+          ? GAME_EVENTS.SUBMIT_NOT_IN_WORD_LIST
           : undefined;
 
     return {

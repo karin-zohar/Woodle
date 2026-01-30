@@ -12,10 +12,6 @@ export type UseToastReturnType = {
 
 const useToast = (): UseToastReturnType => {
 	const toastContext = useToastContext();
-	if (toastContext) {
-		return toastContext;
-	}
-
 	const [messageApi, contextHolder] = message.useMessage({ maxCount: 1 });
 
 	const removeDefaultIcon = <span style={{ display: 'none' }}></span>;
@@ -32,6 +28,11 @@ const useToast = (): UseToastReturnType => {
 		},
 		[messageApi]
 	);
+
+	// Return context if available (from ToastProvider), otherwise use local hook state
+	if (toastContext) {
+		return toastContext;
+	}
 
 	return { contextHolder, showToast };
 };

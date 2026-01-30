@@ -5,7 +5,6 @@ import type { ToastType } from '@/libs/hooks/useToast/useToast';
 type GenToastProps = {
     text: string;
     type: ToastType;
-    successfulGuess?: number;
 };
 
 const GenToast: FC<GenToastProps> = ({ text, type }) => {

@@ -4,7 +4,8 @@ import { calculateRowStatus, getKeyboardAction } from "./useGame.util";
 import { TILE_STATUS } from "./useGame.type";
 import useStore from "@/store/store";
 import useToast, { type UseToastReturnType } from "../useToast/useToast";
-import dispatchCustomEvent from '@/libs/helpers/dispatchCustomEvent'
+import dispatchCustomEvent from '@/libs/helpers/dispatchCustomEvent';
+import { GAME_EVENTS } from '@/libs/constants/gameEvents';
 
 
 type SubmitHandler = (
@@ -13,14 +14,14 @@ type SubmitHandler = (
 ) => void;
 
 const SUBMIT_HANDLERS: Record<string, SubmitHandler> = {
-  'submit-not-enough-letters': (showToast) => showToast('info', 'Not enough letters'),
-  'submit-not-in-word-list': (showToast) => showToast('info', 'Not in word list'),
-  'game-over-won': (showToast, event) => {
+  [GAME_EVENTS.SUBMIT_NOT_ENOUGH_LETTERS]: (showToast) => showToast('info', 'Not enough letters'),
+  [GAME_EVENTS.SUBMIT_NOT_IN_WORD_LIST]: (showToast) => showToast('info', 'Not in word list'),
+  [GAME_EVENTS.GAME_OVER_WON]: (showToast, event) => {
     const guessesLength = event.detail as number;
     const messages = ['Genius', 'Magnificent', 'Impressive', 'Splendid', 'Great', 'Phew'];
     showToast('info', messages[guessesLength - 1] ?? 'Game Over');
   },
-  'game-over-lost': (showToast, event) => {
+  [GAME_EVENTS.GAME_OVER_LOST]: (showToast, event) => {
     const solution = event.detail as string;
     showToast('info', solution);
   },
@@ -87,9 +88,9 @@ export const useGame = (): UseGameReturn => {
       const nextLength = guesses.length + 1;
       setGuesses((prev) => [...prev, guess]);
       if (currentGuess === gameSettings.solution) {
-        dispatchCustomEvent('game-over-won', nextLength);
+        dispatchCustomEvent(GAME_EVENTS.GAME_OVER_WON, nextLength);
       } else if (nextLength > gameSettings.wordLength) {
-        dispatchCustomEvent('game-over-lost', gameSettings.solution);
+        dispatchCustomEvent(GAME_EVENTS.GAME_OVER_LOST, gameSettings.solution);
       }
       setCurrentGuess("");
     }
