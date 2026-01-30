@@ -1,5 +1,36 @@
 import { TILE_STATUS, type ValidationResult } from "./useGame.type";
+import type { ToastType } from '../useToast/useToast';
 import { GAME_EVENTS } from '@/libs/constants/gameEvents';
+
+export type SubmitHandler = (
+  showToast: (type: ToastType, text: string) => void,
+  event: CustomEvent
+) => void;
+
+export const SUBMIT_HANDLERS: Record<string, SubmitHandler> = {
+  [GAME_EVENTS.SUBMIT_NOT_ENOUGH_LETTERS]: (showToast) =>
+    showToast('info', 'Not enough letters'),
+  [GAME_EVENTS.SUBMIT_NOT_IN_WORD_LIST]: (showToast) =>
+    showToast('info', 'Not in word list'),
+  [GAME_EVENTS.SUBMIT_UNKNOWN_ERROR]: (showToast) =>
+    showToast('error', 'Something went wrong'),
+  [GAME_EVENTS.GAME_OVER_WON]: (showToast, event) => {
+    const guessesLength = event.detail as number;
+    const messages = [
+      'Genius',
+      'Magnificent',
+      'Impressive',
+      'Splendid',
+      'Great',
+      'Phew',
+    ];
+    showToast('info', messages[guessesLength - 1] ?? 'Game Over');
+  },
+  [GAME_EVENTS.GAME_OVER_LOST]: (showToast, event) => {
+    const solution = event.detail as string;
+    showToast('info', solution);
+  },
+};
 
 export const calculateRowStatus = (guess: string, solution: string) => {
   const solutionChars = solution.split("");

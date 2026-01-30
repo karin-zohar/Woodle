@@ -20,12 +20,10 @@
 }
 
 .gen-toast {
-    --metal: linear-gradient(to right,
-            var(--gray-600) 0%, var(--gray-400) 35%, var(--gray-100) 50%,
-            var(--gray-400) 65%, var(--gray-600) 100%);
     height: 60px;
     display: flex;
     width: fit-content;
+    min-width: 120px;
     padding: 10px 6px;
     border-radius: 10px;
     border: 2px solid var(--golden-chestnut);
@@ -41,20 +39,22 @@
         position-area: center;
         width: 100px;
         height: 200px;
+        --metal: linear-gradient(to right,
+                var(--gray-600) 0%, var(--gray-400) 35%, var(--gray-100) 50%,
+                var(--gray-400) 65%, var(--gray-600) 100%);
         background: var(--metal) 0 0 / 10px 100% no-repeat,
             var(--metal) right 0 top 0 / 10px 100% no-repeat;
         z-index: -1;
     }
 
     .gen-toast-message {
-        flex: 1;
         border-radius: 8px;
-        background: linear-gradient(to bottom, var(--desert-sand) 0%, var(--golden-chestnut) 140%);
+        background: linear-gradient(to bottom, light-dark(var(--desert-sand), var(--toffee-brown)) 0%, var(--golden-chestnut) 140%);
         padding: 10px 8px;
         font-family: RobotoMono, Arial;
         font-weight: 700;
         text-transform: uppercase;
-        color: var(--espresso);
+        color: light-dark(var(--espresso), var(--linen));
         border: 2px solid var(--toffee-brown);
     }
 }

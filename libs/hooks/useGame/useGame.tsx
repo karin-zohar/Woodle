@@ -1,38 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { UseGameReturn } from "./useGame.type";
-import { calculateRowStatus, getKeyboardAction } from "./useGame.util";
+import { calculateRowStatus, getKeyboardAction, SUBMIT_HANDLERS } from "./useGame.util";
 import { TILE_STATUS } from "./useGame.type";
 import useStore from "@/store/store";
-import useToast, { type UseToastReturnType } from "../useToast/useToast";
+import useToast from "../useToast/useToast";
 import dispatchCustomEvent from '@/libs/helpers/dispatchCustomEvent';
 import { GAME_EVENTS } from '@/libs/constants/gameEvents';
 
-
-type SubmitHandler = (
-  showToast: UseToastReturnType['showToast'],
-  event: CustomEvent
-) => void;
-
-const SUBMIT_HANDLERS: Record<string, SubmitHandler> = {
-  [GAME_EVENTS.SUBMIT_NOT_ENOUGH_LETTERS]: (showToast) => showToast('info', 'Not enough letters'),
-  [GAME_EVENTS.SUBMIT_NOT_IN_WORD_LIST]: (showToast) => showToast('info', 'Not in word list'),
-  [GAME_EVENTS.GAME_OVER_WON]: (showToast, event) => {
-    const guessesLength = event.detail as number;
-    const messages = ['Genius', 'Magnificent', 'Impressive', 'Splendid', 'Great', 'Phew'];
-    showToast('info', messages[guessesLength - 1] ?? 'Game Over');
-  },
-  [GAME_EVENTS.GAME_OVER_LOST]: (showToast, event) => {
-    const solution = event.detail as string;
-    showToast('info', solution);
-  },
-};
-
 export const useGame = (): UseGameReturn => {
   const { showToast } = useToast()
-  // Settings
   const { gameSettings } = useStore();
 
-  // Board
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
 
@@ -55,7 +33,6 @@ export const useGame = (): UseGameReturn => {
     };
   }, [showToast])
 
-  // TODO: memoize board
   const board = useMemo(() => {
     return Array.from({ length: gameSettings.wordLength + 1 }).map(
       (_, rowIndex) => {
@@ -82,7 +59,7 @@ export const useGame = (): UseGameReturn => {
     );
   }, [guesses, currentGuess, gameSettings.solution, gameSettings.wordLength]);
 
-  const addGuess = () => {
+  const submitGuess = () => {
     if (currentGuess.length === gameSettings.wordLength) {
       const guess = currentGuess;
       const nextLength = guesses.length + 1;
@@ -96,9 +73,7 @@ export const useGame = (): UseGameReturn => {
     }
   };
 
-  const submitGuess = () => {
-    addGuess();
-  };
+
 
   const onType = useCallback(
     (key: string) => {
@@ -118,7 +93,7 @@ export const useGame = (): UseGameReturn => {
           if (result.isValid) {
             submitGuess();
           } else {
-            dispatchCustomEvent(result.invalidReason ?? '');
+            dispatchCustomEvent(result.invalidReason ?? GAME_EVENTS.SUBMIT_UNKNOWN_ERROR);
             // TODO: trigger a shake animation here.
           }
           break;
