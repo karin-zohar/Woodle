@@ -52,6 +52,7 @@
         background: linear-gradient(to bottom, var(--desert-sand) 0%, var(--golden-chestnut) 140%);
         padding: 10px 8px;
         font-family: RobotoMono, Arial;
+        font-weight: 700;
         text-transform: uppercase;
         color: var(--espresso);
         border: 2px solid var(--toffee-brown);

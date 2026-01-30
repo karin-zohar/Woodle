@@ -34,6 +34,11 @@ export const getKeyboardAction = (
   wordLength: number
 ): ValidationResult => {
   if (key === "Enter") {
+    if (currentGuess.length === 0) {
+      return {
+        action: "IGNORE"
+      }
+    }
     const invalidReason =
       currentGuess.length !== wordLength
         ? ("submit-not-enough-letters" as const)
