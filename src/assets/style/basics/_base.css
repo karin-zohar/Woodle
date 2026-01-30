@@ -4,8 +4,6 @@
 
 html {
   height: 100vh;
-  background-color: var(--linen);
-  color: var(--espresso);
   font-family: "RobotoMono", Arial, sans-serif;
 
   .theme {

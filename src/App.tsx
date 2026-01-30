@@ -2,6 +2,7 @@ import { BrowserRouter as Router, useRoutes } from "react-router";
 import MainLayout from "./components/MainLayout/MainLayout";
 import routes from "./router/routes";
 import ModalRender from "./components/ModalRender/ModalRender";
+import { ToastProvider } from "./providers/Toast";
 
 const AppRoutes = () => {
   return useRoutes(routes);
@@ -10,10 +11,12 @@ const AppRoutes = () => {
 function App() {
   return (
     <Router>
-      <ModalRender />
-      <MainLayout>
-        <AppRoutes />
-      </MainLayout>
+      <ToastProvider>
+        <ModalRender />
+        <MainLayout>
+          <AppRoutes />
+        </MainLayout>
+      </ToastProvider>
     </Router>
   );
 }

@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { UseGameReturn } from "./useGame.type";
-import { calculateRowStatus, getKeyboardAction } from "./useGame.util";
+import { calculateRowStatus, getKeyboardAction, SUBMIT_HANDLERS } from "./useGame.util";
 import { TILE_STATUS } from "./useGame.type";
 import useStore from "@/store/store";
+import useToast from "../useToast/useToast";
+import dispatchCustomEvent from '@/libs/helpers/dispatchCustomEvent';
+import { GAME_EVENTS } from '@/libs/constants/gameEvents';
 
 export const useGame = (): UseGameReturn => {
-  // Settings
+  const { showToast } = useToast()
   const { gameSettings } = useStore();
 
-  // Board
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
 
@@ -17,7 +19,20 @@ export const useGame = (): UseGameReturn => {
     setCurrentGuess("");
   }, [gameSettings.wordLength, gameSettings.solution]);
 
-  // TODO: memoize board
+  useEffect(() => {
+    const listeners = Object.entries(SUBMIT_HANDLERS).map(([eventName, handler]) => {
+      const listener = (event: Event) => handler(showToast, event as CustomEvent);
+      window.addEventListener(eventName, listener);
+      return { eventName, listener };
+    });
+
+    return () => {
+      listeners.forEach(({ eventName, listener }) => {
+        window.removeEventListener(eventName, listener);
+      });
+    };
+  }, [showToast])
+
   const board = useMemo(() => {
     return Array.from({ length: gameSettings.wordLength + 1 }).map(
       (_, rowIndex) => {
@@ -44,18 +59,21 @@ export const useGame = (): UseGameReturn => {
     );
   }, [guesses, currentGuess, gameSettings.solution, gameSettings.wordLength]);
 
-  const addGuess = () => {
+  const submitGuess = () => {
     if (currentGuess.length === gameSettings.wordLength) {
       const guess = currentGuess;
-      // validate guess
+      const nextLength = guesses.length + 1;
       setGuesses((prev) => [...prev, guess]);
+      if (currentGuess === gameSettings.solution) {
+        dispatchCustomEvent(GAME_EVENTS.GAME_OVER_WON, nextLength);
+      } else if (nextLength > gameSettings.wordLength) {
+        dispatchCustomEvent(GAME_EVENTS.GAME_OVER_LOST, gameSettings.solution);
+      }
       setCurrentGuess("");
     }
   };
 
-  const submitGuess = () => {
-    addGuess();
-  };
+
 
   const onType = useCallback(
     (key: string) => {
@@ -75,7 +93,7 @@ export const useGame = (): UseGameReturn => {
           if (result.isValid) {
             submitGuess();
           } else {
-            console.log("Word too short!");
+            dispatchCustomEvent(result.invalidReason ?? GAME_EVENTS.SUBMIT_UNKNOWN_ERROR);
             // TODO: trigger a shake animation here.
           }
           break;
