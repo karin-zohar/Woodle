@@ -7,7 +7,7 @@ const TileRow: FC<TileRowType> = ({ tiles }) => {
   return (
     <div className={"tile-row"}>
       {tiles.map((tile: TileType, idx) => (
-        <Tile status={tile.status} content={tile.content} key={idx} />
+        <Tile status={tile.status} content={tile.content} index={idx} key={idx} />
       ))}
     </div>
   );

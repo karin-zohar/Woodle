@@ -7,6 +7,7 @@
 }
 
 .tile {
+  position: relative;
   width: 52px;
   height: 52px;
   border: 2px solid var(--toffee-brown);
@@ -19,21 +20,52 @@
   font-size: 36px;
   font-family: AllertaStencil;
   text-transform: uppercase;
+  transform-style: preserve-3d;
+
+  &:not(.editing) {
+    /* Flip animation (transform only) - each tile waits for previous to finish */
+    animation: flip 0.4s both;
+    animation-delay: calc(var(--tile-index, 0) * 0.4s);
+
+    /* Color change at flip midpoint (stagger delay + half of flip duration) */
+    background-color: var(--tile-color, light-dark(var(--desert-sand), var(--toffee-brown)));
+    border-color: var(--toffee-brown);
+    color: var(--white);
+    transition:
+      background-color 0s,
+      border-color 0s,
+      color 0s;
+    transition-delay: calc(var(--tile-index, 0) * 0.4s + 0.2s);
+  }
 
   &.editing {
-    color: light-dark(var(--espresso), var(--white));
+    background-color: light-dark(var(--desert-sand), var(--toffee-brown));
     border-color: var(--espresso);
+    color: light-dark(var(--espresso), var(--white));
   }
 }
 
-.tile,
+.tile.gray {
+  --tile-color: var(--tile-gray);
+}
+
+.tile.yellow {
+  --tile-color: var(--tile-yellow);
+}
+
+.tile.green {
+  --tile-color: var(--tile-green);
+}
+
 .keyboard .keyboard-row button.keyboard-key.ant-btn {
   &.gray {
     background-color: var(--tile-gray);
   }
+
   &.yellow {
     background-color: var(--tile-yellow);
   }
+
   &.green {
     background-color: var(--tile-green);
   }

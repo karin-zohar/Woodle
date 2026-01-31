@@ -11,6 +11,7 @@ export type TileStatusValue = (typeof TILE_STATUS)[keyof typeof TILE_STATUS];
 export type TileType = {
   status: TileStatusValue;
   content?: string;
+  index?: number;
 };
 
 export type TileRowType = {
