@@ -16,6 +16,8 @@ export type TileType = {
 
 export type TileRowType = {
   tiles: TileType[];
+  rowIndex?: number;
+  isInvalid?: boolean;
 };
 
 export type GameBoardProps = {

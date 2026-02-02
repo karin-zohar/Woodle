@@ -57,6 +57,10 @@
   --tile-color: var(--tile-green);
 }
 
+.invalid-guess .tile {
+  animation: shake 600ms infinite;
+}
+
 .keyboard .keyboard-row button.keyboard-key.ant-btn {
   &.gray {
     background-color: var(--tile-gray);

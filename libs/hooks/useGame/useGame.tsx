@@ -13,6 +13,7 @@ export const useGame = (): UseGameReturn => {
 
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
+  const [invalidRowIndex, setInvalidRowIndex] = useState<number | null>(null);
 
   useEffect(() => {
     setGuesses([]);
@@ -47,6 +48,7 @@ export const useGame = (): UseGameReturn => {
           : [];
 
         return {
+          isInvalid: rowIndex === invalidRowIndex,
           tiles: word
             .padEnd(gameSettings.wordLength, " ")
             .split("")
@@ -57,7 +59,7 @@ export const useGame = (): UseGameReturn => {
         };
       }
     );
-  }, [guesses, currentGuess, gameSettings.solution, gameSettings.wordLength]);
+  }, [guesses, currentGuess, gameSettings.solution, gameSettings.wordLength, invalidRowIndex]);
 
   const submitGuess = () => {
     if (currentGuess.length === gameSettings.wordLength) {
@@ -94,7 +96,8 @@ export const useGame = (): UseGameReturn => {
             submitGuess();
           } else {
             dispatchCustomEvent(result.invalidReason ?? GAME_EVENTS.SUBMIT_UNKNOWN_ERROR);
-            // TODO: trigger a shake animation here.
+            setInvalidRowIndex(guesses.length);
+            setTimeout(() => setInvalidRowIndex(null), 600);
           }
           break;
 
