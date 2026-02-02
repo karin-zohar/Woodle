@@ -23,7 +23,7 @@
   transform-style: preserve-3d;
 
   &:not(.editing) {
-    /* Flip animation (transform only) - each tile waits for previous to finish */
+    /* Flip animation - each tile waits for previous to finish */
     animation: flip 0.4s both;
     animation-delay: calc(var(--tile-index, 0) * 0.4s);
 
@@ -59,6 +59,13 @@
 
 .invalid-guess .tile {
   animation: shake 600ms infinite;
+}
+
+.win .tile {
+  /* Flip first, then bounce after all flips end (each tile bounces in sequence) */
+  animation: flip 0.4s both, bounce 0.5s;
+  animation-delay: calc(var(--tile-index, 0) * 0.4s), calc(var(--tiles-count, 5) * 0.4s + var(--tile-index, 0) * 0.07s);
+  z-index: 100;
 }
 
 .keyboard .keyboard-row button.keyboard-key.ant-btn {

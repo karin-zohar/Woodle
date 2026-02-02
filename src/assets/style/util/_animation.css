@@ -71,3 +71,40 @@
     transform: translateX(4px);
   }
 }
+
+/* Vertical bounce (up/down) */
+@keyframes bounce {
+
+  0%,
+  20% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+
+
+  80% {
+    transform: translateY(20px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Wordle-style scale pop: tiles grow slightly and settle (staggered per tile) */
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.5);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
