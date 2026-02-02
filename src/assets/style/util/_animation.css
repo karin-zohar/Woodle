@@ -93,18 +93,3 @@
     transform: translateY(0);
   }
 }
-
-/* Wordle-style scale pop: tiles grow slightly and settle (staggered per tile) */
-@keyframes pop {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.5);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}

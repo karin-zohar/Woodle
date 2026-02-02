@@ -58,7 +58,7 @@
 }
 
 .invalid-guess .tile {
-  animation: shake 600ms infinite;
+  animation: shake 600ms 1;
 }
 
 .win .tile {

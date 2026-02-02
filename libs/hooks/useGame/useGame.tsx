@@ -114,7 +114,7 @@ export const useGame = (): UseGameReturn => {
           break;
       }
     },
-    [currentGuess, gameSettings.wordLength, submitGuess]
+    [currentGuess, gameSettings.wordLength, submitGuess, guesses.length]
   );
 
   return {
