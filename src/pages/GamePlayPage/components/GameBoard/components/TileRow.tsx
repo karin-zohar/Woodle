@@ -2,11 +2,9 @@ import type { FC } from "react";
 import { memo } from "react";
 import Tile from "./Tile";
 import type { TileRowType, TileType } from "@/libs/hooks/useGame";
-import { TILE_STATUS } from "@/libs/hooks/useGame/useGame.type";
 import clsx from "clsx";
 
-const TileRow: FC<TileRowType> = ({ tiles, isInvalid }) => {
-  const isWin = tiles.length > 0 && tiles.every((t) => t.status === TILE_STATUS.CORRECT);
+const TileRow: FC<TileRowType> = ({ tiles, isInvalid, isWin }) => {
   return (
     <div
       className={clsx("tile-row", { "invalid-guess": isInvalid, win: isWin })}

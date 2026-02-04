@@ -51,6 +51,7 @@ export const useGame = (): UseGameReturn => {
 
         return {
           isInvalid: rowIndex === guesses.length && currentGuess.isInvalid,
+          isWin: isFinished && word === gameSettings.solution,
           tiles: word
             .padEnd(gameSettings.wordLength, " ")
             .split("")
@@ -106,8 +107,6 @@ export const useGame = (): UseGameReturn => {
         case "TYPE":
           if (result.isValid) {
             setCurrentGuess((prev) => ({ ...prev, guess: prev.guess + key.toLowerCase() }));
-          } else {
-            console.log("Row is full!");
           }
           break;
 

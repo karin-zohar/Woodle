@@ -17,6 +17,7 @@ export type TileType = {
 export type TileRowType = {
   tiles: TileType[];
   isInvalid?: boolean;
+  isWin?: boolean;
 };
 
 export type GameBoardProps = {
