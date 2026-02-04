@@ -12,12 +12,14 @@ export const useGame = (): UseGameReturn => {
   const { gameSettings } = useStore();
 
   const [guesses, setGuesses] = useState<string[]>([]);
-  const [currentGuess, setCurrentGuess] = useState<string>("");
-  const [invalidRowIndex, setInvalidRowIndex] = useState<number | null>(null);
+  const [currentGuess, setCurrentGuess] = useState<{ guess: string; isInvalid: boolean }>({
+    guess: "",
+    isInvalid: false,
+  });
 
   useEffect(() => {
     setGuesses([]);
-    setCurrentGuess("");
+    setCurrentGuess({ guess: "", isInvalid: false });
   }, [gameSettings.wordLength, gameSettings.solution]);
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export const useGame = (): UseGameReturn => {
       (_, rowIndex) => {
         const word =
           guesses[rowIndex] ||
-          (rowIndex === guesses.length ? currentGuess : "");
+          (rowIndex === guesses.length ? currentGuess.guess : "");
 
         const isFinished = rowIndex < guesses.length;
 
@@ -48,7 +50,7 @@ export const useGame = (): UseGameReturn => {
           : [];
 
         return {
-          isInvalid: rowIndex === invalidRowIndex,
+          isInvalid: rowIndex === guesses.length && currentGuess.isInvalid,
           tiles: word
             .padEnd(gameSettings.wordLength, " ")
             .split("")
@@ -59,19 +61,19 @@ export const useGame = (): UseGameReturn => {
         };
       }
     );
-  }, [guesses, currentGuess, gameSettings.solution, gameSettings.wordLength, invalidRowIndex]);
+  }, [guesses, currentGuess, gameSettings.solution, gameSettings.wordLength]);
 
   const submitGuess = () => {
-    if (currentGuess.length === gameSettings.wordLength) {
-      const guess = currentGuess;
+    if (currentGuess.guess.length === gameSettings.wordLength) {
+      const guess = currentGuess.guess;
       const nextLength = guesses.length + 1;
       setGuesses((prev) => [...prev, guess]);
-      if (currentGuess === gameSettings.solution) {
+      if (currentGuess.guess === gameSettings.solution) {
         dispatchCustomEvent(GAME_EVENTS.GAME_OVER_WON, nextLength);
       } else if (nextLength > gameSettings.wordLength) {
         dispatchCustomEvent(GAME_EVENTS.GAME_OVER_LOST, gameSettings.solution);
       }
-      setCurrentGuess("");
+      setCurrentGuess({ guess: "", isInvalid: false });
     }
   };
 
@@ -80,13 +82,13 @@ export const useGame = (): UseGameReturn => {
   const onType = useCallback(
     (key: string) => {
       if (key === "Backspace") {
-        setCurrentGuess((prev) => prev.slice(0, -1));
+        setCurrentGuess((prev) => ({ ...prev, guess: prev.guess.slice(0, -1) }));
         return;
       }
 
       const result = getKeyboardAction(
         key,
-        currentGuess,
+        currentGuess.guess,
         gameSettings.wordLength
       );
 
@@ -96,14 +98,14 @@ export const useGame = (): UseGameReturn => {
             submitGuess();
           } else {
             dispatchCustomEvent(result.invalidReason ?? GAME_EVENTS.SUBMIT_UNKNOWN_ERROR);
-            setInvalidRowIndex(guesses.length);
-            setTimeout(() => setInvalidRowIndex(null), 600);
+            setCurrentGuess((prev) => ({ ...prev, isInvalid: true }));
+            setTimeout(() => setCurrentGuess((prev) => ({ ...prev, isInvalid: false })), 600);
           }
           break;
 
         case "TYPE":
           if (result.isValid) {
-            setCurrentGuess(currentGuess + key.toLowerCase());
+            setCurrentGuess((prev) => ({ ...prev, guess: prev.guess + key.toLowerCase() }));
           } else {
             console.log("Row is full!");
           }

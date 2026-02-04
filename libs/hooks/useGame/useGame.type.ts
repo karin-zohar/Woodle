@@ -30,7 +30,7 @@ export type UseGameReturn = {
   guesses: string[];
   submitGuess: () => void;
   onType: (key: string) => void;
-  currentGuess: string;
+  currentGuess: { guess: string; isInvalid: boolean };
 };
 
 import { GAME_EVENTS } from '@/libs/constants/gameEvents';
