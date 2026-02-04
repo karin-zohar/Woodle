@@ -14,7 +14,7 @@ const GameBoard: FC<GameBoardProps> = ({ rows }) => {
     <div className={clsx("game-board", "wood-grain", boardSize)}>
       <div className="rows-container">
         {rows.map((row: TileRowType, idx) => (
-          <TileRow tiles={row.tiles} key={idx} />
+          <TileRow {...row} key={idx} />
         ))}
       </div>
     </div>

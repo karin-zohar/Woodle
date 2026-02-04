@@ -24,7 +24,10 @@ export const SUBMIT_HANDLERS: Record<string, SubmitHandler> = {
       'Great',
       'Phew',
     ];
-    showToast('info', messages[guessesLength - 1] ?? 'Game Over');
+
+    setTimeout(() => {
+      showToast('info', messages[guessesLength - 1] ?? 'Game Over');
+    }, 3000);
   },
   [GAME_EVENTS.GAME_OVER_LOST]: (showToast, event) => {
     const solution = event.detail as string;
@@ -59,7 +62,7 @@ export const calculateRowStatus = (guess: string, solution: string) => {
 };
 
 // TODO: Replace with a proper word list loaded from a file, grouped by word length
-const allowedWordsList = ['trial', 'growl', 'arise']
+const allowedWordsList = ['trial', 'growl', 'arise', 'arisex', 'trialx', 'arisexx', 'trialxx']
 
 export const getKeyboardAction = (
   key: string,
@@ -75,7 +78,7 @@ export const getKeyboardAction = (
     const invalidReason =
       currentGuess.length !== wordLength
         ? GAME_EVENTS.SUBMIT_NOT_ENOUGH_LETTERS
-        : !allowedWordsList.includes(currentGuess)
+        : !allowedWordsList.includes(currentGuess.toLowerCase())
           ? GAME_EVENTS.SUBMIT_NOT_IN_WORD_LIST
           : undefined;
 

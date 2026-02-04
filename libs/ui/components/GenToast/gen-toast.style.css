@@ -48,6 +48,7 @@
     }
 
     .gen-toast-message {
+        flex: 1;
         border-radius: 8px;
         background: linear-gradient(to bottom, light-dark(var(--desert-sand), var(--toffee-brown)) 0%, var(--golden-chestnut) 140%);
         padding: 10px 8px;

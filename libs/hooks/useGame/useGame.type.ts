@@ -11,10 +11,13 @@ export type TileStatusValue = (typeof TILE_STATUS)[keyof typeof TILE_STATUS];
 export type TileType = {
   status: TileStatusValue;
   content?: string;
+  index?: number;
 };
 
 export type TileRowType = {
   tiles: TileType[];
+  isInvalid?: boolean;
+  isWin?: boolean;
 };
 
 export type GameBoardProps = {
@@ -28,7 +31,7 @@ export type UseGameReturn = {
   guesses: string[];
   submitGuess: () => void;
   onType: (key: string) => void;
-  currentGuess: string;
+  currentGuess: { guess: string; isInvalid: boolean };
 };
 
 import { GAME_EVENTS } from '@/libs/constants/gameEvents';
