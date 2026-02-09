@@ -29,15 +29,32 @@ const DEFAULT_GAME_SETTINGS: GameSettings = {
 export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
   const storedSettings = localStorage.getItem(GAME_SETTINGS_LOCAL_STORAGE_KEY);
   let gameSettings: GameSettings;
-  
+
   if (storedSettings) {
-    const parsed = JSON.parse(storedSettings);
-    // Handle migration: if old data doesn't have activeGameId, generate one
-    gameSettings = parsed.activeGameId
-      ? parsed
-      : { ...parsed, activeGameId: Date.now().toString() };
-    // Save migrated data back to localStorage
-    if (!parsed.activeGameId) {
+    try {
+      const parsed = JSON.parse(storedSettings);
+      // Handle migration: if old data doesn't have activeGameId, generate one
+      gameSettings = parsed.activeGameId
+        ? parsed
+        : { ...parsed, activeGameId: Date.now().toString() };
+      // Validate shape: ensure required fields exist
+      if (
+        typeof gameSettings.wordLength !== "number" ||
+        typeof gameSettings.solution !== "string" ||
+        typeof gameSettings.activeGameId !== "string"
+      ) {
+        throw new Error("Invalid game settings shape");
+      }
+      const validWordLengths: WordLength[] = [5, 6, 7];
+      if (!validWordLengths.includes(gameSettings.wordLength)) {
+        gameSettings = { ...gameSettings, wordLength: 5 };
+      }
+      // Save migrated data back to localStorage
+      if (!parsed.activeGameId) {
+        localStorage.setItem(GAME_SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(gameSettings));
+      }
+    } catch {
+      gameSettings = { ...DEFAULT_GAME_SETTINGS };
       localStorage.setItem(GAME_SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(gameSettings));
     }
   } else {

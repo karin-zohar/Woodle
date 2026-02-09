@@ -19,7 +19,7 @@ description: Review code for correctness, React/state patterns, security, and ma
 
 1. **Scope**: Identify what changed (current-branch diff or user-specified files).
 2. **Check**: Run through the checklist below.
-3. **Report**: Use the feedback format; be concise and actionable.
+3. **Report**: Use the feedback format: a single numbered list (most critical → nice to have); be concise and actionable.
 
 ## Review Checklist
 
@@ -36,13 +36,14 @@ description: Review code for correctness, React/state patterns, security, and ma
 
 ## Feedback Format
 
-Use this format so findings are easy to prioritize:
+**Present the review as a numbered list**, ordered from **most critical** to **nice to have**, so issues can be referred to by number (e.g. "fix #3").
 
-- **Critical**: Must fix before merge (bugs, security, broken behavior).
-- **Suggestion**: Should consider (performance, clarity, minor bugs).
-- **Nice to have**: Optional improvement (style, docs, refactors).
+1. **Critical** — Must fix before merge (bugs, security, broken behavior).
+2. **Suggestion** — Should consider (performance, clarity, minor bugs).
+3. **Nice to have** — Optional improvement (style, docs, refactors).
 
-Keep each item to 1–2 sentences with a concrete fix or next step when possible.
+- Number each finding in a single list; higher numbers = lower priority.
+- Keep each item to 1–2 sentences with a concrete fix or next step when possible.
 
 ## Project Context
 
