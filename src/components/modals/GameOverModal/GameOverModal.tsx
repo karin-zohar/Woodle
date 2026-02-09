@@ -5,7 +5,7 @@ import { Button, Flex } from "antd";
 
 const GameOverModal = () => {
   const location = useLocation();
-  const { closeModal } = useModal();
+  const { patchModalParams } = useModal();
   const { startNewGame, gameSettings } = useStore();
 
   const queryParams = new URLSearchParams(location.search);
@@ -14,16 +14,19 @@ const GameOverModal = () => {
 
   const handleNewGame = () => {
     startNewGame(gameSettings.wordLength);
-    closeModal("game-over");
+    patchModalParams({
+      "game-over": false,
+      "game-over-won": false,
+      "game-over-lost": false,
+    });
   };
 
   const title = result === "won" ? "You won!" : "Game over";
-  const message =
-    result === "lost" && solution
-      ? `The word was ${solution.toUpperCase()}`
-      : result === "lost"
-        ? "You ran out of guesses."
-        : null;
+
+  let message: string | null = null;
+  if (result === "lost") {
+    message = solution ? `The word was ${solution.toUpperCase()}` : "You ran out of guesses.";
+  }
 
   return (
     <Flex

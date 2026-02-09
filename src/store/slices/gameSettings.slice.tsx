@@ -83,10 +83,11 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
       });
     },
     startNewGame: (wordLength: WordLength) => {
-      set(() => {
+      set((state) => {
+        const oldGameId = state.gameSettings.activeGameId;
         // TODO: Replace with proper solution fetching logic
         const solution = PLACEHOLDER_SOLUTION; // Placeholder - same solution every time until fetching logic is defined
-        
+
         const newGameId = Date.now().toString();
         const newSettings: GameSettings = {
           wordLength,
@@ -94,8 +95,8 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
           activeGameId: newGameId,
         };
         localStorage.setItem(GAME_SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(newSettings));
-        // Clear guesses for the new game
         localStorage.setItem(`${GUESSES_LOCAL_STORAGE_KEY}-${newGameId}`, JSON.stringify([]));
+        localStorage.removeItem(`${GUESSES_LOCAL_STORAGE_KEY}-${oldGameId}`);
         return {
           gameSettings: newSettings,
         };

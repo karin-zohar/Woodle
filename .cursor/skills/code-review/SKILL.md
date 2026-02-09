@@ -17,22 +17,14 @@ description: Review code for correctness, React/state patterns, security, and ma
 
 ## Quick Process
 
-1. **Scope**: Identify what changed (current-branch diff or user-specified files).
-2. **Check**: Run through the checklist below.
-3. **Report**: Use the feedback format: a single numbered list (most critical → nice to have); be concise and actionable.
+1. **Open checklist**: At the start of every code review, **open the review checklist in a separate editor tab** so the user can reference it: read/open `.cursor/skills/code-review/CHECKLIST.md` (this will open it in a tab).
+2. **Scope**: Identify what changed (current-branch diff or user-specified files).
+3. **Check**: Run through the checklist in CHECKLIST.md.
+4. **Report**: Use the feedback format: a single numbered list (most critical → nice to have); be concise and actionable.
 
 ## Review Checklist
 
-- [ ] **Coding principles**: Follows project conventions; single responsibility; clear separation of concerns.
-- [ ] **Naming conventions**: Variables, functions, components, and files named consistently and descriptively (see [STANDARDS.md](STANDARDS.md)).
-- [ ] **Readability**: Code is easy to follow; complex logic is explained or simplified; formatting consistent.
-- [ ] **Error handling**: Timeouts, missing or incorrect API/input fields are handled; user-facing errors are clear; no unhandled rejections or silent failures.
-- [ ] **Number of renders**: No unnecessary re-renders; hooks (deps, memoization) used correctly; state updates predictable.
-- [ ] **Efficiency of data loading**: API calls are minimal and well-scoped; no over-fetching or redundant requests; caching considered where appropriate.
-- [ ] **Overall application loading speed**: Critical path is lean; heavy work deferred or lazy-loaded; no blocking operations on initial load.
-- [ ] **Correctness**: Logic is sound; edge cases and null/undefined handled.
-- [ ] **Security**: No obvious vulnerabilities (XSS, injection, sensitive data exposure).
-- [ ] **Maintainability**: Functions focused; duplication minimized.
+The full checklist lives in **[CHECKLIST.md](.cursor/skills/code-review/CHECKLIST.md)**. Open that file in a separate editor tab at the start of each review.
 
 ## Feedback Format
 
