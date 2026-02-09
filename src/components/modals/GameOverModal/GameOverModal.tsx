@@ -43,7 +43,7 @@ const GameOverModal = () => {
       <Button
         className="woodle-button"
         onClick={handleNewGame}
-        type="primary"
+        variant="outlined"
         size="middle"
       >
         New Game
