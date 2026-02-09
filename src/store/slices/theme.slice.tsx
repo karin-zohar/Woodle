@@ -8,7 +8,7 @@ export type ThemeSlice = {
   setTheme: (theme: Theme) => void;
 };
 
-export const themeSlice: StateCreator<ThemeSlice> = (set, get) => {
+export const themeSlice: StateCreator<ThemeSlice> = (set) => {
   const initialTheme = (localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as Theme) || "light";
   
   return {

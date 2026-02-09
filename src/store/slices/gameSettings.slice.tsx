@@ -26,7 +26,7 @@ const DEFAULT_GAME_SETTINGS: GameSettings = {
   activeGameId: Date.now().toString(),
 };
 
-export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set, get) => {
+export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
   const storedSettings = localStorage.getItem(GAME_SETTINGS_LOCAL_STORAGE_KEY);
   let gameSettings: GameSettings;
   
