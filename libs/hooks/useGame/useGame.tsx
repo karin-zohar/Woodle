@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocalStorage } from "react-use";
 import type { UseGameReturn } from "./useGame.type";
 import { calculateRowStatus, getKeyboardAction, SUBMIT_HANDLERS } from "./useGame.util";
 import { TILE_STATUS } from "./useGame.type";
@@ -6,21 +7,27 @@ import useStore from "@/store/store";
 import useToast from "../useToast/useToast";
 import dispatchCustomEvent from '@/libs/helpers/dispatchCustomEvent';
 import { GAME_EVENTS } from '@/libs/constants/gameEvents';
+import { GUESSES_LOCAL_STORAGE_KEY } from "@/store/slices/gameSettings.slice";
 
 export const useGame = (): UseGameReturn => {
   const { showToast } = useToast()
-  const { gameSettings } = useStore();
+  const activeGameId = useStore((state) => state.gameSettings.activeGameId);
+  const gameSettings = useStore((state) => state.gameSettings);
 
-  const [guesses, setGuesses] = useState<string[]>([]);
+  const [guesses, setGuesses] = useLocalStorage<string[]>(
+    `${GUESSES_LOCAL_STORAGE_KEY}-${activeGameId}`,
+    []
+  );
   const [currentGuess, setCurrentGuess] = useState<{ guess: string; isInvalid: boolean }>({
     guess: "",
     isInvalid: false,
   });
 
+  // Reset current guess when activeGameId changes (new game)
+  // Guesses are cleared in startNewGame, and will automatically load from localStorage via useLocalStorage when the key changes
   useEffect(() => {
-    setGuesses([]);
     setCurrentGuess({ guess: "", isInvalid: false });
-  }, [gameSettings.wordLength, gameSettings.solution]);
+  }, [activeGameId]);
 
   useEffect(() => {
     const listeners = Object.entries(SUBMIT_HANDLERS).map(([eventName, handler]) => {
@@ -37,20 +44,21 @@ export const useGame = (): UseGameReturn => {
   }, [showToast])
 
   const board = useMemo(() => {
+    const guessesArray = guesses || [];
     return Array.from({ length: gameSettings.wordLength + 1 }).map(
       (_, rowIndex) => {
         const word =
-          guesses[rowIndex] ||
-          (rowIndex === guesses.length ? currentGuess.guess : "");
+          guessesArray[rowIndex] ||
+          (rowIndex === guessesArray.length ? currentGuess.guess : "");
 
-        const isFinished = rowIndex < guesses.length;
+        const isFinished = rowIndex < guessesArray.length;
 
         const rowStatuses = isFinished
           ? calculateRowStatus(word, gameSettings.solution)
           : [];
 
         return {
-          isInvalid: rowIndex === guesses.length && currentGuess.isInvalid,
+          isInvalid: rowIndex === guessesArray.length && currentGuess.isInvalid,
           isWin: isFinished && word === gameSettings.solution,
           tiles: word
             .padEnd(gameSettings.wordLength, " ")
@@ -67,8 +75,8 @@ export const useGame = (): UseGameReturn => {
   const submitGuess = () => {
     if (currentGuess.guess.length === gameSettings.wordLength) {
       const guess = currentGuess.guess;
-      const nextLength = guesses.length + 1;
-      setGuesses((prev) => [...prev, guess]);
+      const nextLength = (guesses?.length || 0) + 1;
+      setGuesses([...(guesses || []), guess]);
       if (currentGuess.guess === gameSettings.solution) {
         dispatchCustomEvent(GAME_EVENTS.GAME_OVER_WON, nextLength);
       } else if (nextLength > gameSettings.wordLength) {
@@ -115,12 +123,12 @@ export const useGame = (): UseGameReturn => {
           break;
       }
     },
-    [currentGuess, gameSettings.wordLength, submitGuess, guesses.length]
+    [currentGuess, gameSettings.wordLength, submitGuess, guesses?.length]
   );
 
   return {
     board,
-    guesses,
+    guesses: guesses || [],
     submitGuess,
     onType,
     currentGuess,
