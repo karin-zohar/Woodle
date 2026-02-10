@@ -39,11 +39,9 @@ export const useGame = (): UseGameReturn => {
   );
 
   // Reset guess state when activeGameId changes (new game).
-  // useLocalStorage from react-use does not re-initialize when the key changes, so we must clear guesses explicitly.
   useEffect(() => {
     setCurrentGuess({ guess: "", isInvalid: false });
-    setGuesses([]);
-  }, [activeGameId, setGuesses]);
+  }, [activeGameId]);
 
   const openGameOverModal = useCallback(
     (result: "won" | "lost") => {
