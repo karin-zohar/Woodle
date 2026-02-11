@@ -24,7 +24,7 @@ const useModal = () => {
   };
 
   // Batch update modals.
-  //  Example: patchModalParams({ settings: false, 'end-game': true })
+  //  Example: patchModalParams({ 'settings': false, 'end-game': true })
 
   const patchModalParams = (updates: Record<string, boolean>) => {
     const params = new URLSearchParams(location.search);
@@ -42,5 +42,8 @@ const useModal = () => {
 
   return { openModal, closeModal, patchModalParams };
 };
+
+export type UseModalReturn = ReturnType<typeof useModal>;
+export type PatchModalParams = UseModalReturn['patchModalParams'];
 
 export default useModal;

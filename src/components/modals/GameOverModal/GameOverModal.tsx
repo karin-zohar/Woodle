@@ -1,6 +1,6 @@
 import { useLocation } from "react-router";
 import useStore from "@/store/store";
-import useModal from "@/libs/hooks/useModal/useModal";
+import { useModal } from "@/libs/hooks";
 import { Button, Flex } from "antd";
 
 const GameOverModal = () => {
@@ -9,22 +9,22 @@ const GameOverModal = () => {
   const { startNewGame, gameSettings } = useStore();
 
   const queryParams = new URLSearchParams(location.search);
-  const result = queryParams.get("game-over-won") === "true" ? "won" : queryParams.get("game-over-lost") === "true" ? "lost" : null;
-  const solution = result === "lost" ? gameSettings.solution : null;
+  const isOpen = queryParams.get("game-over") === "true";
+  const isWin = queryParams.get("win") === "true";
+  const solution = !isWin && isOpen ? gameSettings.solution : null;
 
   const handleNewGame = () => {
     startNewGame(gameSettings.wordLength);
     patchModalParams({
       "game-over": false,
-      "game-over-won": false,
-      "game-over-lost": false,
+      "win": false,
     });
   };
 
-  const title = result === "won" ? "You won!" : "Game over";
+  const title = isWin ? "You won!" : "Game over";
 
   let message: string | null = null;
-  if (result === "lost") {
+  if (!isWin && isOpen) {
     message = solution ? `The word was ${solution.toUpperCase()}` : "You ran out of guesses.";
   }
 

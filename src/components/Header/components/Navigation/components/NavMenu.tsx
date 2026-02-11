@@ -2,7 +2,7 @@ import type { FC } from "react";
 import { HomeIcon, QuestionIcon, SettingsIcon } from "@/libs/ui/icons";
 import { Menu, type MenuProps } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import useModal from "@/libs/hooks/useModal/useModal";
+import { useModal } from "@/libs/hooks";
 
 type NavMenuProps = {
   layout: "horizontal" | "vertical";

@@ -7,7 +7,7 @@ import {
   TILE_STATUS,
   type TileRowType,
   type TileStatusValue,
-} from "@/libs/hooks/useGame";
+} from "@/libs/hooks";
 
 type KeyboardProps = {
   onType: (key: string) => void;

@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { GameBoardProps, TileRowType } from "@/libs/hooks/useGame";
+import type { GameBoardProps, TileRowType } from "@/libs/hooks";
 import TileRow from "./components/TileRow";
 import "./game-board.style.css";
 import clsx from "clsx";

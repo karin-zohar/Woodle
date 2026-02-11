@@ -1,6 +1,6 @@
 import GameBoard from "./components/GameBoard/GameBoard";
 import Keyboard from "./components/Keyboard/Keyboard";
-import { useGame } from "@/libs/hooks/useGame/index";
+import { useGame } from "@/libs/hooks";
 import "./game-play-page.style.css";
 
 const GamePlayPage = () => {

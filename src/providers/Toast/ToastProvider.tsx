@@ -1,5 +1,5 @@
 import { createContext, useContext, type  FC, type ReactNode, } from 'react';
-import useToast from '@/libs/hooks/useToast/useToast';
+import { useToast } from '@/libs/hooks';
 
 type ToastContextType = ReturnType<typeof useToast>;
 

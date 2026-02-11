@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocalStorage } from "react-use";
-import type { UseGameReturn } from "./useGame.type";
-import { calculateRowStatus, getKeyboardAction, SUBMIT_HANDLERS } from "./useGame.util";
-import { TILE_STATUS } from "./useGame.type";
+import { TILE_STATUS , type UseGameReturn } from "./useGame.type";
+import { calculateRowStatus, getKeyboardAction, checkGameStatus } from "./useGame.util";
+import { SUBMIT_HANDLERS } from "./useGame.handlers";
 import useStore from "@/store/store";
-import useToast from "../useToast/useToast";
-import useModal from "../useModal/useModal";
+import { useToast, useModal } from "../index";
 import dispatchCustomEvent from "@/libs/helpers/dispatchCustomEvent";
 import { GAME_EVENTS } from "@/libs/constants/gameEvents";
 import { GUESSES_LOCAL_STORAGE_KEY } from "@/store/slices/gameSettings.slice";
-
-const GAME_OVER_MODAL_DELAY_MS = 4000;
 
 export const useGame = (): UseGameReturn => {
   const { showToast } = useToast();
@@ -22,45 +19,21 @@ export const useGame = (): UseGameReturn => {
     `${GUESSES_LOCAL_STORAGE_KEY}-${activeGameId}`,
     []
   );
+  
   const [currentGuess, setCurrentGuess] = useState<{ guess: string; isInvalid: boolean }>({
     guess: "",
     isInvalid: false,
   });
-
-   const checkGameStatus = useCallback(
-    (guess: string, solution: string, wordLength: number, guessesCountAfterSubmit: number) => {
-      if (guess === solution) {
-        dispatchCustomEvent(GAME_EVENTS.GAME_OVER_WON, guessesCountAfterSubmit);
-      } else if (guessesCountAfterSubmit > wordLength) {
-        dispatchCustomEvent(GAME_EVENTS.GAME_OVER_LOST, solution);
-      }
-    },
-    []
-  );
 
   // Reset guess state when activeGameId changes (new game).
   useEffect(() => {
     setCurrentGuess({ guess: "", isInvalid: false });
   }, [activeGameId]);
 
-  const openGameOverModal = useCallback(
-    (result: "won" | "lost") => {
-      setTimeout(() => {
-        patchModalParams({
-          "game-over": true,
-          "game-over-won": result === "won",
-          "game-over-lost": result === "lost",
-        });
-      }, GAME_OVER_MODAL_DELAY_MS);
-    },
-    [patchModalParams]
-  );
-
   useEffect(() => {
-    const context = { openGameOverModal };
     const listeners = Object.entries(SUBMIT_HANDLERS).map(([eventName, handler]) => {
       const listener = (event: Event) =>
-        handler(showToast, event as CustomEvent, context);
+        handler(showToast, event as CustomEvent, patchModalParams);
       window.addEventListener(eventName, listener);
       return { eventName, listener };
     });
@@ -70,7 +43,7 @@ export const useGame = (): UseGameReturn => {
         window.removeEventListener(eventName, listener);
       });
     };
-  }, [showToast, openGameOverModal]);
+  }, [showToast, patchModalParams]);
 
   const board = useMemo(() => {
     const guessesArray = guesses || [];
@@ -116,7 +89,6 @@ export const useGame = (): UseGameReturn => {
     guesses,
     setGuesses,
     setCurrentGuess,
-    checkGameStatus,
   ]);
 
   const onType = useCallback(
