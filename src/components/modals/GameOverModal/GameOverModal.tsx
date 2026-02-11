@@ -1,32 +1,37 @@
-import { useLocation } from "react-router";
+import { useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import useStore from "@/store/store";
 import { useModal } from "@/libs/hooks";
 import { Button, Flex } from "antd";
 
-const GameOverModal = () => {
+const QUERY_PARAM_GAME_OVER = "game-over";
+const QUERY_PARAM_WIN = "win";
+
+const GameOverModal = () => { 
   const location = useLocation();
   const { patchModalParams } = useModal();
   const { startNewGame, gameSettings } = useStore();
 
-  const queryParams = new URLSearchParams(location.search);
-  const isOpen = queryParams.get("game-over") === "true";
-  const isWin = queryParams.get("win") === "true";
-  const solution = !isWin && isOpen ? gameSettings.solution : null;
+  const queryParams = useMemo(
+    () => new URLSearchParams(location.search),
+    [location.search]
+  );
+  const isWin = queryParams.get(QUERY_PARAM_WIN) === "true";
+  const solution = gameSettings.solution;
 
   const handleNewGame = () => {
     startNewGame(gameSettings.wordLength);
     patchModalParams({
-      "game-over": false,
-      "win": false,
+      [QUERY_PARAM_GAME_OVER]: false,
+      [QUERY_PARAM_WIN]: false,
     });
   };
 
   const title = isWin ? "You won!" : "Game over";
 
-  let message: string | null = null;
-  if (!isWin && isOpen) {
-    message = solution ? `The word was ${solution.toUpperCase()}` : "You ran out of guesses.";
-  }
+  const message = isWin
+    ? `The word was ${solution.toUpperCase()}`
+    : "You ran out of guesses.";
 
   return (
     <Flex
@@ -36,12 +41,8 @@ const GameOverModal = () => {
       className="game-over-modal"
       gap={20}
     >
-      <span style={{ textAlign: "center", fontWeight: 600 }}>
-        {title}
-      </span>
-      {message && (
-        <span style={{ textAlign: "center" }}>{message}</span>
-      )}
+      <span style={{ textAlign: "center", fontWeight: 600 }}>{title}</span>
+      {message && <span style={{ textAlign: "center" }}>{message}</span>}
 
       <Button
         className="woodle-button"
