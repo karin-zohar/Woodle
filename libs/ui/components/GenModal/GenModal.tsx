@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import { useLocation } from "react-router";
 import { Modal, Flex, Typography, type ModalProps } from "antd";
-import useModal from "@/libs/hooks/useModal/useModal";
+import { useModal } from "@/libs/hooks";
 import GenCloseButton from "../GenCloseButton/GenCloseButton";
 import clsx from "clsx";
 import "./gen-modal.style.css";

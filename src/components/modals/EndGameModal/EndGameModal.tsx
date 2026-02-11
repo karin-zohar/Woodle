@@ -1,6 +1,6 @@
 import dispatchCustomEvent from "@/libs/helpers/dispatchCustomEvent";
 import { GAME_EVENTS } from "@/libs/constants/gameEvents";
-import useModal from "@/libs/hooks/useModal/useModal";
+import { useModal } from "@/libs/hooks";
 import { Button, Flex } from "antd";
 
 const EndGameModal = () => {

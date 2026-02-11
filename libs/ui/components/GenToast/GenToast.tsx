@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import './gen-toast.style.css';
-import type { ToastType } from '@/libs/hooks/useToast/useToast';
+import type { ToastType } from '@/libs/hooks';
 import useStore from '@/store/store';
 import clsx from 'clsx';
 

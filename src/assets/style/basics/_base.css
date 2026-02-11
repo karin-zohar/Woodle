@@ -7,7 +7,7 @@ html {
   font-family: "RobotoMono", Arial, sans-serif;
 
   .theme {
-    background-color: light-dark(var(--linen), var(--espresso));
+    background-color: light-dark(var(--linen), var(--dark-espresso));
     color: light-dark(var(--espresso), var(--linen));
 
     &.light {

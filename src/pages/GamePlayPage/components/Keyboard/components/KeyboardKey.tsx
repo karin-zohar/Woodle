@@ -1,4 +1,4 @@
-import type { TileStatusValue } from "@/libs/hooks/useGame";
+import type { TileStatusValue } from "@/libs/hooks";
 import { Button } from "antd";
 import clsx from "clsx";
 import type {  FC, ReactNode } from "react";

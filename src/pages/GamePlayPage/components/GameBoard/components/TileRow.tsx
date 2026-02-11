@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { memo } from "react";
 import Tile from "./Tile";
-import type { TileRowType, TileType } from "@/libs/hooks/useGame";
+import type { TileRowType, TileType } from "@/libs/hooks";
 import clsx from "clsx";
 
 const TileRow: FC<TileRowType> = ({ tiles, isInvalid, isWin }) => {

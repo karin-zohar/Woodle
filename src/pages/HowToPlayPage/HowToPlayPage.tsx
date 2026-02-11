@@ -1,4 +1,4 @@
-import { TILE_STATUS } from "@/libs/hooks/useGame";
+import { TILE_STATUS } from "@/libs/hooks";
 import useStore from "@/store/store";
 import { Typography } from "antd";
 import ExampleTileRow from "./components/ExampleTileRow";

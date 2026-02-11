@@ -1,8 +1,7 @@
 import { useLocation } from "react-router";
 import useStore from "@/store/store";
 import GenModal from "@/libs/ui/components/GenModal/GenModal";
-import SettingsModal from "../modals/SettingsModal/SettingsModal";
-import EndGameModal from "../modals/EndGameModal/EndGameModal";
+import { SettingsModal, EndGameModal, GameOverModal } from "../modals";
 
 const MODAL_CONFIGS = [
   {
@@ -16,6 +15,12 @@ const MODAL_CONFIGS = [
     key: "end-game",
     queryParam: "end-game",
     content: <EndGameModal />,
+  },
+  {
+    key: "game-over",
+    queryParam: "game-over",
+    className: "game-over-modal-wrapper",
+    content: <GameOverModal />,
   },
 ];
 
