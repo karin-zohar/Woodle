@@ -1,9 +1,7 @@
 import { useLocation } from "react-router";
 import useStore from "@/store/store";
 import GenModal from "@/libs/ui/components/GenModal/GenModal";
-import SettingsModal from "../modals/SettingsModal/SettingsModal";
-import EndGameModal from "../modals/EndGameModal/EndGameModal";
-import GameOverModal from "../modals/GameOverModal/GameOverModal";
+import { SettingsModal, EndGameModal, GameOverModal } from "../modals";
 
 const MODAL_CONFIGS = [
   {
