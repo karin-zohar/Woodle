@@ -1,8 +1,8 @@
 import { type StateCreator } from "zustand";
 
 const THEME_LOCAL_STORAGE_KEY = "theme";
-
 const VALID_THEMES = ["light", "dark"] as const;
+
 type Theme = (typeof VALID_THEMES)[number];
 export type ThemeSlice = {
   theme: Theme;
@@ -24,7 +24,11 @@ export const themeSlice: StateCreator<ThemeSlice> = (set) => {
     theme: initialTheme,
     setTheme: (theme: Theme) => {
       set({ theme });
-      localStorage.setItem(THEME_LOCAL_STORAGE_KEY, theme);
+      try {
+        localStorage.setItem(THEME_LOCAL_STORAGE_KEY, theme);
+      } catch (error) {
+        console.error("Failed to save theme to localStorage:", error);
+      }
     },
   };
 };

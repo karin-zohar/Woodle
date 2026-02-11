@@ -26,48 +26,77 @@ const DEFAULT_GAME_SETTINGS: GameSettings = {
   activeGameId: Date.now().toString(),
 };
 
-export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
-  const storedSettings = localStorage.getItem(GAME_SETTINGS_LOCAL_STORAGE_KEY);
-  let gameSettings: GameSettings;
-
-  if (storedSettings) {
-    try {
-      const parsed = JSON.parse(storedSettings);
-      // Handle migration: if old data doesn't have activeGameId, generate one
-      gameSettings = parsed.activeGameId
-        ? parsed
-        : { ...parsed, activeGameId: Date.now().toString() };
-      // Validate shape: ensure required fields exist
-      if (
-        typeof gameSettings.wordLength !== "number" ||
-        typeof gameSettings.solution !== "string" ||
-        typeof gameSettings.activeGameId !== "string"
-      ) {
-        throw new Error("Invalid game settings shape");
-      }
-      const validWordLengths: WordLength[] = [5, 6, 7];
-      if (!validWordLengths.includes(gameSettings.wordLength)) {
-        gameSettings = { ...gameSettings, wordLength: 5 };
-      }
-      // Save migrated data back to localStorage
-      if (!parsed.activeGameId) {
-        localStorage.setItem(GAME_SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(gameSettings));
-      }
-    } catch {
-      gameSettings = { ...DEFAULT_GAME_SETTINGS };
-      localStorage.setItem(GAME_SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(gameSettings));
-    }
-  } else {
-    gameSettings = DEFAULT_GAME_SETTINGS;
-    localStorage.setItem(GAME_SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(DEFAULT_GAME_SETTINGS));
+const saveSettings = (settings: GameSettings): void => {
+  try {
+    localStorage.setItem(GAME_SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(settings));
+  } catch (error) {
+    console.error("Failed to save game settings to localStorage:", error);
   }
+};
+
+const validateAndNormalizeSettings = (parsed: unknown): GameSettings => {
+  const settings = parsed as Partial<GameSettings>;
+  
+  // Handle migration: add activeGameId if missing
+  const migrated = settings.activeGameId
+    ? settings
+    : { ...settings, activeGameId: Date.now().toString() };
+
+  // Validate shape
+  if (
+    typeof migrated.wordLength !== "number" ||
+    typeof migrated.solution !== "string" ||
+    typeof migrated.activeGameId !== "string"
+  ) {
+    throw new Error("Invalid game settings shape");
+  }
+
+  // Normalize wordLength
+  const validWordLengths: WordLength[] = [5, 6, 7];
+  const wordLength = validWordLengths.includes(migrated.wordLength as WordLength)
+    ? migrated.wordLength
+    : 5;
+
+  return {
+    wordLength: wordLength as WordLength,
+    solution: migrated.solution,
+    activeGameId: migrated.activeGameId,
+  };
+};
+
+const loadGameSettings = (): GameSettings => {
+  const storedSettings = localStorage.getItem(GAME_SETTINGS_LOCAL_STORAGE_KEY);
+  
+  if (!storedSettings) {
+    saveSettings(DEFAULT_GAME_SETTINGS);
+    return DEFAULT_GAME_SETTINGS;
+  }
+
+  try {
+    const parsed = JSON.parse(storedSettings);
+    const settings = validateAndNormalizeSettings(parsed);
+    
+    // Save migrated data if needed
+    if (!(parsed as Partial<GameSettings>).activeGameId) {
+      saveSettings(settings);
+    }
+    
+    return settings;
+  } catch {
+    saveSettings(DEFAULT_GAME_SETTINGS);
+    return DEFAULT_GAME_SETTINGS;
+  }
+};
+
+export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
+  const gameSettings = loadGameSettings();
 
   return {
     gameSettings,
     setWordLength: (wordLength: WordLength) => {
       set((state) => {
         const newSettings = { ...state.gameSettings, wordLength };
-        localStorage.setItem(GAME_SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(newSettings));
+        saveSettings(newSettings);
         return {
           gameSettings: newSettings,
         };
@@ -76,7 +105,7 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
     setSolution: (solution: string) => {
       set((state) => {
         const newSettings = { ...state.gameSettings, solution };
-        localStorage.setItem(GAME_SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(newSettings));
+        saveSettings(newSettings);
         return {
           gameSettings: newSettings,
         };
@@ -94,9 +123,13 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
           solution,
           activeGameId: newGameId,
         };
-        localStorage.setItem(GAME_SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(newSettings));
-        localStorage.setItem(`${GUESSES_LOCAL_STORAGE_KEY}-${newGameId}`, JSON.stringify([]));
-        localStorage.removeItem(`${GUESSES_LOCAL_STORAGE_KEY}-${oldGameId}`);
+        try {
+          saveSettings(newSettings);
+          localStorage.setItem(`${GUESSES_LOCAL_STORAGE_KEY}-${newGameId}`, JSON.stringify([]));
+          localStorage.removeItem(`${GUESSES_LOCAL_STORAGE_KEY}-${oldGameId}`);
+        } catch (error) {
+          console.error("Failed to save new game settings to localStorage:", error);
+        }
         return {
           gameSettings: newSettings,
         };
