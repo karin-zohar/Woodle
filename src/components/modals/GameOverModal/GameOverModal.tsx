@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import useStore from "@/store/store";
+import { getDecodedSolution } from "@/store/slices/gameSettings.slice";
 import { useModal, useStartNewGame, useToast } from "@/libs/hooks";
 import { Button, Flex } from "antd";
 
@@ -12,14 +13,20 @@ const GameOverModal = () => {
   const { patchModalParams } = useModal();
   const { showToast } = useToast();
   const { gameSettings } = useStore();
+  const solution = useStore((state) => getDecodedSolution(state.gameSettings));
   const { startNewGame, isPending } = useStartNewGame();
+
+  const solutionRef = useRef<string | null>(null);
+  if (solution && solutionRef.current === null) {
+    solutionRef.current = solution;
+  }
+  const solutionToShow = solutionRef.current ?? solution;
 
   const queryParams = useMemo(
     () => new URLSearchParams(location.search),
     [location.search]
   );
   const isWin = queryParams.get(QUERY_PARAM_WIN) === "true";
-  const solution = gameSettings.solution;
 
   const handleNewGame = () => {
     startNewGame(gameSettings.wordLength)
@@ -36,8 +43,14 @@ const GameOverModal = () => {
 
   const title = isWin ? "You won!" : "Game over";
 
-  const solutionText = `The word was ${solution.toUpperCase()}`;
-  const message = isWin ? solutionText : `You ran out of guesses. ${solutionText}`;
+  const solutionText = solutionToShow
+    ? `The word was ${solutionToShow.toUpperCase()}`
+    : "";
+  const message = isWin
+    ? solutionText
+    : solutionText
+      ? `You ran out of guesses. ${solutionText}`
+      : "You ran out of guesses.";
 
   return (
     <Flex

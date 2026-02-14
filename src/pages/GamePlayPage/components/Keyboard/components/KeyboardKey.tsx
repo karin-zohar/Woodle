@@ -9,6 +9,7 @@ type KeyboardKeyProps = {
   value: string;
   label?: ReactNode;
   status: TileStatusValue;
+  disabled?: boolean;
 };
 
 const KeyboardKey: FC<KeyboardKeyProps> = ({
@@ -16,12 +17,18 @@ const KeyboardKey: FC<KeyboardKeyProps> = ({
   value,
   label,
   status,
+  disabled = false,
 }) => {
   return (
     <Button
       className={clsx("keyboard-key", status)}
-      onClick={() => onType(value)}
+      onClick={() => {
+        if (!disabled) {
+          onType(value);
+        }
+      }}
       aria-label={typeof label === "string" ? label : value}
+      disabled={disabled}
     >
       {label ?? value}
     </Button>

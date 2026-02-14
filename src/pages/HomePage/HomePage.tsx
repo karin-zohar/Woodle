@@ -8,7 +8,7 @@ import "./home-page.style.css";
 const HomePage = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { gameSettings } = useStore();
+  const gameSettings = useStore((state) => state.gameSettings);
   const { startNewGame, isPending } = useStartNewGame();
   const { wordLength } = gameSettings;
   const maxGuessAmount = wordLength + 1;

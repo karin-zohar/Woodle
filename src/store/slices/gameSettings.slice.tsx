@@ -1,4 +1,5 @@
 import { type StateCreator } from "zustand";
+import { decode, encode } from "@/services/obfuscation.service";
 
 const GAME_SETTINGS_LOCAL_STORAGE_KEY = "woodle-game-settings";
 export const GUESSES_LOCAL_STORAGE_KEY = "woodle-guesses";
@@ -11,19 +12,24 @@ export type GameSettings = {
   activeGameId: string;
 };
 
-/** True when the user has a game in progress (valid solution), so we don't start a new one on navigation. */
-export const hasOngoingGame = (settings: GameSettings): boolean =>
-  !!(settings.solution && settings.solution.trim() !== "");
+/** True when the user has a game in progress (valid decoded solution). */
+export const hasOngoingGame = (settings: GameSettings): boolean => {
+  const decoded = decode(settings.solution);
+  return !!(decoded && decoded.trim() !== "");
+};
 
-/** True when we have no solution yet (e.g. no persisted settings); UI should fetch and set. */
-export const needsSolution = (settings: GameSettings): boolean =>
-  !settings.solution || settings.solution.trim() === "";
+/** Returns the decoded solution for gameplay/display; use this instead of settings.solution in UI. */
+export const getDecodedSolution = (settings: GameSettings): string =>
+  decode(settings.solution);
 
 export type GameSettingsSlice = {
   gameSettings: GameSettings;
   setWordLength: (wordLength: WordLength) => void;
   setSolution: (solution: string) => void;
   applyNewGame: (wordLength: WordLength, solution: string) => void;
+  /** True while a new game solution is being fetched (prevents double-fetch). */
+  isFetchingSolution: boolean;
+  setFetchingSolution: (value: boolean) => void;
 };
 
 /** No persisted settings: empty solution so UI fetches and sets via applyNewGame. */
@@ -38,6 +44,7 @@ const saveSettings = (settings: GameSettings): void => {
     localStorage.setItem(GAME_SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(settings));
   } catch (error) {
     console.error("Failed to save game settings to localStorage:", error);
+    throw error;
   }
 };
 
@@ -73,24 +80,35 @@ const validateAndNormalizeSettings = (parsed: unknown): GameSettings => {
 
 const loadGameSettings = (): GameSettings => {
   const storedSettings = localStorage.getItem(GAME_SETTINGS_LOCAL_STORAGE_KEY);
-  
+
   if (!storedSettings) {
-    saveSettings(DEFAULT_GAME_SETTINGS);
+    try {
+      saveSettings(DEFAULT_GAME_SETTINGS);
+    } catch (error) {
+      console.error("Failed to persist default game settings to localStorage:", error);
+    }
     return DEFAULT_GAME_SETTINGS;
   }
 
   try {
     const parsed = JSON.parse(storedSettings);
     const settings = validateAndNormalizeSettings(parsed);
-    
-    // Save migrated data if needed
+
     if (!(parsed as Partial<GameSettings>).activeGameId) {
-      saveSettings(settings);
+      try {
+        saveSettings(settings);
+      } catch (error) {
+        console.error("Failed to persist migrated game settings to localStorage:", error);
+      }
     }
-    
+
     return settings;
   } catch {
-    saveSettings(DEFAULT_GAME_SETTINGS);
+    try {
+      saveSettings(DEFAULT_GAME_SETTINGS);
+    } catch (error) {
+      console.error("Failed to persist default game settings to localStorage:", error);
+    }
     return DEFAULT_GAME_SETTINGS;
   }
 };
@@ -100,6 +118,10 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
 
   return {
     gameSettings,
+    isFetchingSolution: false,
+    setFetchingSolution: (value: boolean) => {
+      set({ isFetchingSolution: value });
+    },
     setWordLength: (wordLength: WordLength) => {
       set((state) => {
         const newSettings = { ...state.gameSettings, wordLength };
@@ -111,7 +133,7 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
     },
     setSolution: (solution: string) => {
       set((state) => {
-        const newSettings = { ...state.gameSettings, solution };
+        const newSettings = { ...state.gameSettings, solution: encode(solution) };
         saveSettings(newSettings);
         return {
           gameSettings: newSettings,
@@ -119,20 +141,28 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
       });
     },
     applyNewGame: (wordLength: WordLength, solution: string) => {
+      const trimmed = typeof solution === "string" ? solution.trim().toLowerCase() : "";
+      if (!trimmed || trimmed.length !== wordLength) {
+        throw new Error("applyNewGame: invalid solution for word length");
+      }
+      const encodedSolution = encode(trimmed);
+      if (!encodedSolution) {
+        throw new Error("applyNewGame: failed to encode solution");
+      }
       set((state) => {
         const oldGameId = state.gameSettings.activeGameId;
         const newGameId = Date.now().toString();
         const newSettings: GameSettings = {
           wordLength,
-          solution,
+          solution: encodedSolution,
           activeGameId: newGameId,
         };
+        saveSettings(newSettings);
         try {
-          saveSettings(newSettings);
           localStorage.setItem(`${GUESSES_LOCAL_STORAGE_KEY}-${newGameId}`, JSON.stringify([]));
           localStorage.removeItem(`${GUESSES_LOCAL_STORAGE_KEY}-${oldGameId}`);
         } catch (error) {
-          console.error("Failed to save new game settings to localStorage:", error);
+          console.error("Failed to persist guesses keys to localStorage:", error);
         }
         return {
           gameSettings: newSettings,

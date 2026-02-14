@@ -20,6 +20,7 @@
 }
 
 .gen-toast {
+    position: relative;
     height: 60px;
     display: flex;
     width: fit-content;
@@ -29,14 +30,13 @@
     border: 2px solid var(--golden-chestnut);
     background-color: var(--golden-chestnut);
     box-shadow: var(--box-shadow);
-    anchor-name: --toast-body;
 
     &::before {
         content: '';
         position: absolute;
-        position-anchor: --toast-body;
-        bottom: anchor(top);
-        position-area: center;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
         width: 100px;
         height: 200px;
         --metal: linear-gradient(to right,

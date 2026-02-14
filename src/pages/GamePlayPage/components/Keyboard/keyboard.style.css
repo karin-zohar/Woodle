@@ -28,3 +28,11 @@
     }
   }
 }
+/* Style when any key has the disabled attribute */
+.keyboard:has(.keyboard-key.ant-btn:disabled) {
+  pointer-events: none;
+}
+.keyboard:has(.keyboard-key.ant-btn:disabled) .keyboard-key.ant-btn {
+  border-color: var(--tile-gray);
+  cursor: not-allowed;
+}

@@ -18,6 +18,10 @@
       gap: 5px;
       justify-content: center;
     }
+
+    .tile-row-validating .tile {
+      animation: tile-pulse 1s ease-in-out infinite;
+    }
   }
 
   &.large {

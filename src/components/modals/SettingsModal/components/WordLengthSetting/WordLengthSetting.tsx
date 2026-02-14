@@ -8,7 +8,8 @@ import { useModal, useConfirmAction, useStartNewGame, useToast } from "@/libs/ho
 const VALID_WORD_LENGTHS: WordLength[] = [5, 6, 7];
 
 const WordLengthSetting = () => {
-  const { gameSettings } = useStore();
+  const wordLength = useStore((state) => state.gameSettings.wordLength);
+  const setWordLength = useStore((state) => state.setWordLength);
   const { openModal } = useModal();
   const { showToast } = useToast();
   const { startNewGame } = useStartNewGame();
@@ -17,7 +18,10 @@ const WordLengthSetting = () => {
   const handleChange = (e: RadioChangeEvent) => {
     const nextValue = e.target.value as WordLength;
     confirm(() => {
+      const prev = useStore.getState().gameSettings.wordLength;
+      setWordLength(nextValue);
       startNewGame(nextValue).catch(() => {
+        setWordLength(prev);
         showToast("error", "Failed to start new game. Please try again.");
       });
     });
@@ -36,7 +40,8 @@ const WordLengthSetting = () => {
     <Flex className="setting setting-word-length" gap={10} vertical>
       <span>Word Length</span>
       <GenRadioGroup
-        value={gameSettings.wordLength}
+        key={wordLength}
+        value={wordLength}
         options={wordLengthOptions}
         onChange={handleChange}
       />

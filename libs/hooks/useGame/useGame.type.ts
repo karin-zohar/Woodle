@@ -18,10 +18,16 @@ export type TileRowType = {
   tiles: TileType[];
   isInvalid?: boolean;
   isWin?: boolean;
+  /** When true, tiles in this row show a loading animation (validating guess). */
+  isValidating?: boolean;
 };
 
 export type GameBoardProps = {
   rows: TileRowType[];
+  /** Index of the row the user is currently typing in (for pulse animation). */
+  currentRowIndex: number;
+  /** When true, the current guess row shows a pulsing loading animation. */
+  isCheckingWord?: boolean;
 };
 
 export type UseGameProps = {};
@@ -29,9 +35,13 @@ export type UseGameProps = {};
 export type UseGameReturn = {
   board: TileRowType[];
   guesses: string[];
-  submitGuess: () => void;
+  /** Index of the row the user is currently typing in (equals guesses.length). */
+  currentRowIndex: number;
+  submitGuess: (overrideGuess?: string) => void;
   onType: (key: string) => void;
   currentGuess: { guess: string; isInvalid: boolean };
+  /** True while a submitted guess is being validated (not in list → API check); typing is disabled. */
+  isCheckingWord: boolean;
 };
 
 import { GAME_EVENTS } from '@/libs/constants/gameEvents';
