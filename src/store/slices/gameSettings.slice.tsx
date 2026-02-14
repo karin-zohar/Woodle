@@ -3,8 +3,6 @@ import { type StateCreator } from "zustand";
 const GAME_SETTINGS_LOCAL_STORAGE_KEY = "woodle-game-settings";
 export const GUESSES_LOCAL_STORAGE_KEY = "woodle-guesses";
 
-const PLACEHOLDER_SOLUTION = "trial"; // TODO: Replace with proper solution fetching logic
-
 export type WordLength = 5 | 6 | 7;
 
 export type GameSettings = {
@@ -13,16 +11,25 @@ export type GameSettings = {
   activeGameId: string;
 };
 
+/** True when the user has a game in progress (valid solution), so we don't start a new one on navigation. */
+export const hasOngoingGame = (settings: GameSettings): boolean =>
+  !!(settings.solution && settings.solution.trim() !== "");
+
+/** True when we have no solution yet (e.g. no persisted settings); UI should fetch and set. */
+export const needsSolution = (settings: GameSettings): boolean =>
+  !settings.solution || settings.solution.trim() === "";
+
 export type GameSettingsSlice = {
   gameSettings: GameSettings;
   setWordLength: (wordLength: WordLength) => void;
   setSolution: (solution: string) => void;
-  startNewGame: (wordLength: WordLength) => void;
+  applyNewGame: (wordLength: WordLength, solution: string) => void;
 };
 
+/** No persisted settings: empty solution so UI fetches and sets via applyNewGame. */
 const DEFAULT_GAME_SETTINGS: GameSettings = {
   wordLength: 5,
-  solution: PLACEHOLDER_SOLUTION, // temp hardcoded
+  solution: "",
   activeGameId: Date.now().toString(),
 };
 
@@ -111,12 +118,9 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
         };
       });
     },
-    startNewGame: (wordLength: WordLength) => {
+    applyNewGame: (wordLength: WordLength, solution: string) => {
       set((state) => {
         const oldGameId = state.gameSettings.activeGameId;
-        // TODO: Replace with proper solution fetching logic
-        const solution = PLACEHOLDER_SOLUTION; // Placeholder - same solution every time until fetching logic is defined
-
         const newGameId = Date.now().toString();
         const newSettings: GameSettings = {
           wordLength,

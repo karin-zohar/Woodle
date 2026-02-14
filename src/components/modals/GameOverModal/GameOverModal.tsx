@@ -1,16 +1,18 @@
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import useStore from "@/store/store";
-import { useModal } from "@/libs/hooks";
+import { useModal, useStartNewGame, useToast } from "@/libs/hooks";
 import { Button, Flex } from "antd";
 
 const QUERY_PARAM_GAME_OVER = "game-over";
 const QUERY_PARAM_WIN = "win";
 
-const GameOverModal = () => { 
+const GameOverModal = () => {
   const location = useLocation();
   const { patchModalParams } = useModal();
-  const { startNewGame, gameSettings } = useStore();
+  const { showToast } = useToast();
+  const { gameSettings } = useStore();
+  const { startNewGame, isPending } = useStartNewGame();
 
   const queryParams = useMemo(
     () => new URLSearchParams(location.search),
@@ -20,18 +22,22 @@ const GameOverModal = () => {
   const solution = gameSettings.solution;
 
   const handleNewGame = () => {
-    startNewGame(gameSettings.wordLength);
-    patchModalParams({
-      [QUERY_PARAM_GAME_OVER]: false,
-      [QUERY_PARAM_WIN]: false,
-    });
+    startNewGame(gameSettings.wordLength)
+      .then(() => {
+        patchModalParams({
+          [QUERY_PARAM_GAME_OVER]: false,
+          [QUERY_PARAM_WIN]: false,
+        });
+      })
+      .catch(() => {
+        showToast("error", "Failed to start new game. Please try again.");
+      });
   };
 
   const title = isWin ? "You won!" : "Game over";
 
-  const message = isWin
-    ? `The word was ${solution.toUpperCase()}`
-    : "You ran out of guesses.";
+  const solutionText = `The word was ${solution.toUpperCase()}`;
+  const message = isWin ? solutionText : `You ran out of guesses. ${solutionText}`;
 
   return (
     <Flex
@@ -49,6 +55,7 @@ const GameOverModal = () => {
         onClick={handleNewGame}
         variant="outlined"
         size="middle"
+        loading={isPending}
       >
         New Game
       </Button>

@@ -1,0 +1,49 @@
+---
+description: Condition blocks must use curly brackets even for single statements
+globs: "**/*.{js,ts,tsx}"
+alwaysApply: false
+---
+
+# Curly Brackets in Condition Blocks
+
+Always use curly brackets `{}` in condition and loop blocks, even when the block contains only one statement. This applies to `if`, `else`, `for`, `while`, and `do...while`.
+
+## Examples
+
+```javascript
+// ❌ BAD – single statement without braces
+if (num > 5) return;
+if (num > 5)
+  return;
+for (let i = 0; i < n; i++) doSomething(i);
+
+// ✅ GOOD – braces always used
+if (num > 5) {
+  return;
+}
+if (num > 5) {
+  return;
+}
+for (let i = 0; i < n; i++) {
+  doSomething(i);
+}
+```
+
+```javascript
+// ❌ BAD – else without braces
+if (ok) doA();
+else doB();
+
+// ✅ GOOD
+if (ok) {
+  doA();
+} else {
+  doB();
+}
+```
+
+## Why
+
+- Reduces risk of bugs when adding a second statement later.
+- Keeps style consistent and easier to read.
+- Avoids ambiguity with nested conditions.
