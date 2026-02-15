@@ -43,6 +43,7 @@ The full checklist lives in **[CHECKLIST.md](.cursor/skills/code-review/CHECKLIS
 
 - **[Curly braces in conditionals](.cursor/rules/curly-braces-conditionals.mdc)** — All `if`, `else`, `for`, `while`, and `do...while` blocks must use curly brackets `{}`, even when the block has only one statement. Flag any single-statement conditionals or loops without braces (e.g. `if (x) return;`, `if (x) continue;`, `for (...) doSomething();`).
 - **Styling** — If a component has a style file (e.g. `*.style.css`), all styling should live there; avoid inline styles unless absolutely necessary.
+- **Avoid loops** — Prefer array methods (`map`, `filter`, `reduce`, `forEach`, etc.) over `for`/`while` loops when iterating over arrays; flag manual loops that could be replaced by these methods.
 
 ## Project Context
 

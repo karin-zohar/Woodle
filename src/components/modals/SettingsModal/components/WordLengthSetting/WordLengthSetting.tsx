@@ -2,10 +2,8 @@ import { Flex, type CheckboxOptionType, type RadioChangeEvent } from "antd";
 import GenRadioGroup from "@/libs/ui/components/GenRadioGroup/GenRadioGroup";
 import WordLengthSettingOption from "./components/WordLengthSettingOption";
 import useStore from "@/store/store";
-import type { WordLength } from "@/store/slices/gameSettings.slice";
+import { WORD_LENGTHS, type WordLength } from "@/store/slices/gameSettings.slice";
 import { useModal, useConfirmAction, useStartNewGame, useToast } from "@/libs/hooks";
-
-const VALID_WORD_LENGTHS: WordLength[] = [5, 6, 7];
 
 const WordLengthSetting = () => {
   const wordLength = useStore((state) => state.gameSettings.wordLength);
@@ -29,7 +27,7 @@ const WordLengthSetting = () => {
     openModal("end-game");
   };
 
-  const wordLengthOptions: CheckboxOptionType[] = VALID_WORD_LENGTHS.map(
+  const wordLengthOptions: CheckboxOptionType[] = WORD_LENGTHS.map(
     (length) => ({
       label: <WordLengthSettingOption value={length} />,
       value: length,

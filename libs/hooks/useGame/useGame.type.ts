@@ -29,13 +29,26 @@ export type GameBoardProps = {
 
 export type UseGameProps = {};
 
+export type CurrentGuessState = { guess: string; isInvalid: boolean };
+
+export type SetCurrentGuess = (
+  updater: (prev: CurrentGuessState) => CurrentGuessState
+) => void;
+
+export type TryAddWordAndSubmitOptions = {
+  setCurrentGuess: SetCurrentGuess;
+  isCheckingWordRef: { current: boolean };
+  setIsCheckingWord: (value: boolean) => void;
+  onNotInList: () => void;
+};
+
 export type UseGameReturn = {
   board: TileRowType[];
   guesses: string[];
   currentRowIndex: number;
   submitGuess: (overrideGuess?: string) => void;
   onType: (key: string) => void;
-  currentGuess: { guess: string; isInvalid: boolean };
+  currentGuess: CurrentGuessState;
   isCheckingWord: boolean;
 };
 

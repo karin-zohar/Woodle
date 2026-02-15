@@ -4,7 +4,9 @@ import { decode, encode } from "@/services/obfuscation.service";
 const GAME_SETTINGS_LOCAL_STORAGE_KEY = "woodle-game-settings";
 export const GUESSES_LOCAL_STORAGE_KEY = "woodle-guesses";
 
-export type WordLength = 5 | 6 | 7;
+/** Single source of truth for supported word lengths. Add a new number here to support another length. */
+export const WORD_LENGTHS = [5, 6, 7] as const;
+export type WordLength = (typeof WORD_LENGTHS)[number];
 
 export type GameSettings = {
   wordLength: WordLength;
@@ -34,7 +36,7 @@ export type GameSettingsSlice = {
 
 /** No persisted settings: empty solution so UI fetches and sets via applyNewGame. */
 const DEFAULT_GAME_SETTINGS: GameSettings = {
-  wordLength: 5,
+  wordLength: WORD_LENGTHS[0],
   solution: "",
   activeGameId: Date.now().toString(),
 };
@@ -51,29 +53,28 @@ const saveSettings = (settings: GameSettings): void => {
 const validateAndNormalizeSettings = (parsed: unknown): GameSettings => {
   const settings = parsed as Partial<GameSettings>;
   
-  const migrated = settings.activeGameId
+  const migratedSettings = settings.activeGameId
     ? settings
     : { ...settings, activeGameId: Date.now().toString() };
 
   // Validate shape
   if (
-    typeof migrated.wordLength !== "number" ||
-    typeof migrated.solution !== "string" ||
-    typeof migrated.activeGameId !== "string"
+    typeof migratedSettings.wordLength !== "number" ||
+    typeof migratedSettings.solution !== "string" ||
+    typeof migratedSettings.activeGameId !== "string"
   ) {
     throw new Error("Invalid game settings shape");
   }
 
   // Normalize wordLength
-  const validWordLengths: WordLength[] = [5, 6, 7];
-  const wordLength = validWordLengths.includes(migrated.wordLength as WordLength)
-    ? migrated.wordLength
-    : 5;
+  const wordLength = (WORD_LENGTHS as readonly number[]).includes(migratedSettings.wordLength)
+    ? migratedSettings.wordLength
+    : WORD_LENGTHS[0];
 
   return {
     wordLength: wordLength as WordLength,
-    solution: migrated.solution,
-    activeGameId: migrated.activeGameId,
+    solution: migratedSettings.solution,
+    activeGameId: migratedSettings.activeGameId,
   };
 };
 

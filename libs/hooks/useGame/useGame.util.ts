@@ -1,8 +1,18 @@
-import { TILE_STATUS, type ValidationResult } from "./useGame.type";
+import {
+  TILE_STATUS,
+  type CurrentGuessState,
+  type SetCurrentGuess,
+  type TileRowType,
+  type TryAddWordAndSubmitOptions,
+  type ValidationResult,
+} from "./useGame.type";
 import { GAME_EVENTS } from "@/libs/constants/gameEvents";
 import dispatchCustomEvent from "@/libs/helpers/dispatchCustomEvent";
-import { isWordAllowed } from "@/libs/data/allowedWords";
+import { addWordToAllowedList, isWordAllowed } from "@/libs/data/allowedWords";
 import type { WordLength } from "@/store/slices/gameSettings.slice";
+import { checkWordIsReal } from "@/api/wordCheckApi";
+
+const INVALID_GUESS_RESET_MS = 600;
 
 export const calculateRowStatus = (guess: string, solution: string) => {
   const solutionChars = solution.split("");
@@ -75,4 +85,85 @@ export const checkGameStatus = (
   } else if (guessesCountAfterSubmit > wordLength) {
     dispatchCustomEvent(GAME_EVENTS.GAME_OVER_LOST, solution);
   }
+};
+
+/**
+ * Dispatches an optional game event, marks the current guess as invalid,
+ * then clears the invalid state after a short delay.
+ */
+export const showInvalidGuessAndClear = (
+  setCurrentGuess: SetCurrentGuess,
+  eventName?: string
+): void => {
+  if (eventName) {
+    dispatchCustomEvent(eventName);
+  }
+  setCurrentGuess((prev) => ({ ...prev, isInvalid: true }));
+  setTimeout(() => {
+    setCurrentGuess((prev) => ({ ...prev, isInvalid: false }));
+  }, INVALID_GUESS_RESET_MS);
+};
+
+/**
+ * Checks if the guess is a real word via API. If so, adds it to the allowed list
+ * and submits. Otherwise calls onNotInList (e.g. show "not in word list").
+ */
+export const tryAddWordAndSubmit = (
+  guess: string,
+  wordLength: WordLength,
+  submitGuess: (overrideGuess?: string) => void,
+  options: TryAddWordAndSubmitOptions
+): void => {
+  const { isCheckingWordRef, setIsCheckingWord, onNotInList } = options;
+  if (isCheckingWordRef.current) {
+    return;
+  }
+  isCheckingWordRef.current = true;
+  setIsCheckingWord(true);
+  checkWordIsReal(guess)
+    .then((isReal) => {
+      if (isReal) {
+        addWordToAllowedList(guess, wordLength);
+        submitGuess(guess);
+      } else {
+        onNotInList();
+      }
+    })
+    .catch(() => {
+      onNotInList();
+    })
+    .finally(() => {
+      isCheckingWordRef.current = false;
+      setIsCheckingWord(false);
+    });
+};
+
+/**
+ * Builds the board rows from guesses, current typing row, solution, and word length.
+ */
+export const buildBoard = (
+  guesses: string[],
+  currentGuess: CurrentGuessState,
+  solution: string,
+  wordLength: WordLength
+): TileRowType[] => {
+  return Array.from({ length: wordLength + 1 }).map((_, rowIndex) => {
+    const word =
+      guesses[rowIndex] ??
+      (rowIndex === guesses.length ? currentGuess.guess : "");
+    const isFinished = rowIndex < guesses.length;
+    const rowStatuses = isFinished ? calculateRowStatus(word, solution) : [];
+
+    return {
+      isInvalid: rowIndex === guesses.length && currentGuess.isInvalid,
+      isWin: isFinished && word === solution,
+      tiles: word
+        .padEnd(wordLength, " ")
+        .split("")
+        .map((char, charIndex) => ({
+          content: char.trim(),
+          status: isFinished ? rowStatuses[charIndex] : TILE_STATUS.EDITING,
+        })),
+    };
+  });
 };
