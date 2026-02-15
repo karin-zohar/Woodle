@@ -27,8 +27,6 @@ export type GameBoardProps = {
   isCheckingWord?: boolean;
 };
 
-export type UseGameProps = {};
-
 export type CurrentGuessState = { guess: string; isInvalid: boolean };
 
 export type SetCurrentGuess = (

@@ -14,6 +14,7 @@ const GameOverModal = () => {
   const { showToast } = useToast();
   const { gameSettings } = useStore();
   const solution = useStore((state) => getDecodedSolution(state.gameSettings));
+  const solutionDefinition = useStore((state) => state.gameSettings.solutionDefinition);
   const { startNewGame, isPending } = useStartNewGame();
 
   const solutionRef = useRef<string | null>(null);
@@ -62,6 +63,11 @@ const GameOverModal = () => {
     >
       <span style={{ textAlign: "center", fontWeight: 600 }}>{title}</span>
       {message && <span style={{ textAlign: "center" }}>{message}</span>}
+      {solutionDefinition && (
+        <span style={{ textAlign: "center", fontStyle: "italic" }}>
+         {solutionDefinition}
+        </span>
+      )}
 
       <Button
         className="woodle-button"

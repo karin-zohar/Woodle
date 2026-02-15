@@ -11,6 +11,7 @@ export type WordLength = (typeof WORD_LENGTHS)[number];
 export type GameSettings = {
   wordLength: WordLength;
   solution: string;
+  solutionDefinition: string | null;
   activeGameId: string;
 };
 
@@ -28,7 +29,7 @@ export type GameSettingsSlice = {
   gameSettings: GameSettings;
   setWordLength: (wordLength: WordLength) => void;
   setSolution: (solution: string) => void;
-  applyNewGame: (wordLength: WordLength, solution: string) => void;
+  applyNewGame: (wordLength: WordLength, solution: string, definition?: string | null) => void;
   /** True while a new game solution is being fetched (prevents double-fetch). */
   isFetchingSolution: boolean;
   setFetchingSolution: (value: boolean) => void;
@@ -38,6 +39,7 @@ export type GameSettingsSlice = {
 const DEFAULT_GAME_SETTINGS: GameSettings = {
   wordLength: WORD_LENGTHS[0],
   solution: "",
+  solutionDefinition: null,
   activeGameId: Date.now().toString(),
 };
 
@@ -71,9 +73,15 @@ const validateAndNormalizeSettings = (parsed: unknown): GameSettings => {
     ? migratedSettings.wordLength
     : WORD_LENGTHS[0];
 
+  const solutionDefinition =
+    typeof migratedSettings.solutionDefinition === "string" && migratedSettings.solutionDefinition.trim() !== ""
+      ? migratedSettings.solutionDefinition.trim()
+      : null;
+
   return {
     wordLength: wordLength as WordLength,
     solution: migratedSettings.solution,
+    solutionDefinition,
     activeGameId: migratedSettings.activeGameId,
   };
 };
@@ -133,14 +141,18 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
     },
     setSolution: (solution: string) => {
       set((state) => {
-        const newSettings = { ...state.gameSettings, solution: encode(solution) };
+        const newSettings = {
+          ...state.gameSettings,
+          solution: encode(solution),
+          solutionDefinition: null,
+        };
         saveSettings(newSettings);
         return {
           gameSettings: newSettings,
         };
       });
     },
-    applyNewGame: (wordLength: WordLength, solution: string) => {
+    applyNewGame: (wordLength: WordLength, solution: string, definition?: string | null) => {
       const trimmed = typeof solution === "string" ? solution.trim().toLowerCase() : "";
       if (!trimmed || trimmed.length !== wordLength) {
         throw new Error("applyNewGame: invalid solution for word length");
@@ -149,12 +161,15 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
       if (!encodedSolution) {
         throw new Error("applyNewGame: failed to encode solution");
       }
+      const solutionDefinition =
+        typeof definition === "string" && definition.trim() !== "" ? definition.trim() : null;
       set((state) => {
         const oldGameId = state.gameSettings.activeGameId;
         const newGameId = Date.now().toString();
         const newSettings: GameSettings = {
           wordLength,
           solution: encodedSolution,
+          solutionDefinition,
           activeGameId: newGameId,
         };
         saveSettings(newSettings);

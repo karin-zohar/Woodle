@@ -7,5 +7,3 @@ export const GAME_EVENTS = {
   CONFIRM_END_GAME: 'CONFIRM_END_GAME',
   CANCEL_END_GAME: 'CANCEL_END_GAME',
 } as const;
-
-export type GameEventName = (typeof GAME_EVENTS)[keyof typeof GAME_EVENTS];

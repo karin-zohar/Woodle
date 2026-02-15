@@ -13,9 +13,10 @@ const fetchSolutionForLength = async (wordLength: WordLength) => {
   let lastError: unknown;
   for (let attempt = 1; attempt <= MAX_FETCH_ATTEMPTS; attempt++) {
     try {
-      const solution = await fetchRandomWord(wordLength);
+      const { solution, definition } = await fetchRandomWord(wordLength);
       if (isValidSolution(solution, wordLength)) {
-        return { wordLength, solution: solution.trim().toLowerCase() };
+        const trimmed = solution.trim().toLowerCase();
+        return { wordLength, solution: trimmed, definition: definition ?? null };
       }
     } catch (err) {
       lastError = err;
@@ -41,7 +42,7 @@ export const useStartNewGame = () => {
       setFetchingSolution(true);
       return fetchSolutionForLength(wordLength)
         .then((result) => {
-          applyNewGame(result.wordLength, result.solution);
+          applyNewGame(result.wordLength, result.solution, result.definition);
         })
         .finally(() => {
           setFetchingSolution(false);

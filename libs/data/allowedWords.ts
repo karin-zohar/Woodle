@@ -71,14 +71,6 @@ const getSetForLength = (length: WordLength): Set<string> => {
   return set;
 };
 
-export const getAllowedWordsByLength = (): Record<WordLength, string[]> =>
-  Object.fromEntries(
-    WORD_LENGTHS.map((len) => {
-      const list = allowedWordsByLength[String(len)];
-      return [len, Array.isArray(list) ? [...list] : []];
-    })
-  ) as Record<WordLength, string[]>;
-
 export const isWordAllowed = (word: string, length: WordLength): boolean => {
   const normalized = normalizeString(word);
   return isLettersOnly(normalized) && getSetForLength(length).has(normalized);
@@ -126,14 +118,8 @@ export const addWordToAllowedList = (word: string, length: WordLength): void => 
 /** True if the word ends in "s" (used to exclude plurals from solution words). */
 const endsWithS = (word: string): boolean => word.endsWith("s");
 
-export const isValidSolution = (word: string, length: WordLength): boolean => {
-  const normalized = normalizeString(word);
-  return isWordAllowed(word, length) && !endsWithS(normalized);
-};
-
 /**
  * Allowed words for the given length that qualify as solutions (letters only, do not end in "s"), normalized to lowercase.
- * Used as fallback when the random-word API cannot provide a valid solution.
  */
 export const getValidSolutionWords = (length: WordLength): string[] => {
   const list = allowedWordsByLength[String(length)];
