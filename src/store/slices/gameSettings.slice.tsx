@@ -51,7 +51,6 @@ const saveSettings = (settings: GameSettings): void => {
 const validateAndNormalizeSettings = (parsed: unknown): GameSettings => {
   const settings = parsed as Partial<GameSettings>;
   
-  // Handle migration: add activeGameId if missing
   const migrated = settings.activeGameId
     ? settings
     : { ...settings, activeGameId: Date.now().toString() };
