@@ -6,58 +6,53 @@
  */
 import { WORD_LENGTHS, type WordLength } from "@/store/slices/gameSettings.slice";
 import { isLettersOnly, normalizeString } from "@/libs/helpers/wordValidation";
+import { parseStoredStrings } from "@/libs/helpers/localStorage";
 import allowedWordsJson from "./allowedWords.json";
 
 const ALLOWED_WORDS_ADDITIONS_KEY = "woodle-allowed-words-additions";
 
-/** Merges persisted additions from localStorage into the given map (mutates it). */
-const mergePersistedAdditions = (out: Record<string, string[]>): void => {
+// Merges persisted additions from localStorage into the given map (mutates it). 
+const mergePersistedAdditions = (wordsByLength: Record<string, string[]>): void => {
   try {
-    const raw = localStorage.getItem(ALLOWED_WORDS_ADDITIONS_KEY);
-    if (!raw) {
+    const rawAdditions = localStorage.getItem(ALLOWED_WORDS_ADDITIONS_KEY);
+    if (!rawAdditions) {
       return;
     }
-    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const parsed = JSON.parse(rawAdditions) as Record<string, unknown>;
     if (!parsed || typeof parsed !== "object") {
       return;
     }
-    WORD_LENGTHS.forEach((len) => {
-      const key = String(len);
-      const added = parsed[key];
-      if (!Array.isArray(added)) {
+    Object.entries(parsed).forEach(([wordLengthKey, addedWords]) => {
+      if (!Array.isArray(addedWords)) {
         return;
       }
-      const list = out[key];
-      parseStoredStrings(added).forEach((w) => {
-        const norm = normalizeString(w);
-        if (norm && !list.includes(norm)) {
-          list.push(norm);
+      const list = wordsByLength[wordLengthKey];
+      if (!Array.isArray(list)) {
+        return;
+      }
+      parseStoredStrings(addedWords).forEach((word) => {
+        const normalized = normalizeString(word);
+        if (normalized && !list.includes(normalized)) {
+          list.push(normalized);
         }
       });
     });
-  } catch {
+  } catch (e) {
     // Corrupted or missing storage: ignore and use only bundled data.
+    console.error("Failed to merge persisted word additions:", e);
   }
 };
 
-/** Returns a string array from stored value; non-strings are filtered out. */
-const parseStoredStrings = (value: unknown): string[] =>
-  Array.isArray(value) ? (value as unknown[]).filter((w): w is string => typeof w === "string") : [];
-
+// Lazy-built map of allowed words by length.
+// Runs on module load. 
 const allowedWordsByLength = ((): Record<string, string[]> => {
-  const json = allowedWordsJson as Record<string, string[]>;
-  const out = Object.fromEntries(
-    WORD_LENGTHS.map((len) => {
-      const key = String(len);
-      const arr = json[key];
-      return [key, Array.isArray(arr) ? [...arr] : []];
-    })
-  ) as Record<string, string[]>;
-  mergePersistedAdditions(out);
-  return out;
+  // Deep copy to avoid mutating the imported JSON
+  const wordsByLength = structuredClone(allowedWordsJson) as Record<string, string[]>;
+  mergePersistedAdditions(wordsByLength);
+  return wordsByLength;
 })();
 
-/** Lazy-built Set per length for O(1) membership check. */
+// Lazy-built Set per length for O(1) membership check.
 const setByLength: Partial<Record<WordLength, Set<string>>> = {};
 
 const getSetForLength = (length: WordLength): Set<string> => {
@@ -76,28 +71,35 @@ export const isWordAllowed = (word: string, length: WordLength): boolean => {
   return isLettersOnly(normalized) && getSetForLength(length).has(normalized);
 };
 
-const persistAddition = (length: WordLength, word: string): void => {
+const persistAddition = (targetLength: WordLength, word: string): void => {
   try {
     const raw = localStorage.getItem(ALLOWED_WORDS_ADDITIONS_KEY);
     const parsed: Record<string, unknown> = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
-    const additionsForLength = parseStoredStrings(parsed[String(length)]);
+    const additionsForLength = parseStoredStrings(parsed[String(targetLength)]);
     if (additionsForLength.includes(word)) {
       return;
     }
     additionsForLength.push(word);
+    
     const toSave: Record<string, string[]> = Object.fromEntries(
-      WORD_LENGTHS.map((len) => [
-        String(len),
-        len === length ? additionsForLength : parseStoredStrings(parsed[String(len)]),
+      WORD_LENGTHS.map((currentLength) => [
+        // key
+        String(currentLength),
+        // value
+        currentLength === targetLength 
+        ? additionsForLength :
+         parseStoredStrings(parsed[String(currentLength)]),
       ])
     );
+
     localStorage.setItem(ALLOWED_WORDS_ADDITIONS_KEY, JSON.stringify(toSave));
   } catch (e) {
     console.error("Failed to persist allowed-word addition:", e);
   }
 };
 
-/** Adds a word to the in-memory allowed list for the given length (e.g. after API confirms it is a real word). Persists to localStorage. */
+// Adds a word to the in-memory allowed list for the given length (after API confirms it is a real word). 
+// Persists to localStorage.
 export const addWordToAllowedList = (word: string, length: WordLength): void => {
   const normalized = normalizeString(word);
   if (!isLettersOnly(normalized) || normalized.length !== length) {
@@ -115,18 +117,14 @@ export const addWordToAllowedList = (word: string, length: WordLength): void => 
   }
 };
 
-/** True if the word ends in "s" (used to exclude plurals from solution words). */
-const endsWithS = (word: string): boolean => word.endsWith("s");
 
-/**
- * Allowed words for the given length that qualify as solutions (letters only, do not end in "s"), normalized to lowercase.
- */
+// Allowed words for the given length that qualify as solutions (letters only), normalized to lowercase.
 export const getValidSolutionWords = (length: WordLength): string[] => {
   const list = allowedWordsByLength[String(length)];
   if (!Array.isArray(list)) {
     return [];
   }
   return list
-    .filter((w) => isLettersOnly(w) && !endsWithS(w))
-    .map((w) => normalizeString(w));
+    .filter((word) => isLettersOnly(word))
+    .map((word) => normalizeString(word));
 };
