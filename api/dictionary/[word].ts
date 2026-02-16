@@ -32,13 +32,22 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const word = req.query.word as string;
+  // Get the word from the dynamic route parameter
+  // For Vercel serverless functions with [word].ts file structure:
+  // - Request: GET /api/dictionary/hello
+  // - Vercel extracts "hello" and puts it in req.query.word
+  const word = req.query.word as string | string[] | undefined;
 
-  if (!word) {
+  // Handle array case (shouldn't happen, but be safe)
+  const wordString = Array.isArray(word) ? word[0] : word;
+
+  if (!wordString || typeof wordString !== 'string' || wordString.trim().length === 0) {
     return res.status(400).json({ error: 'Word parameter is required' });
   }
 
-  const targetUrl = `${DICTIONARY_API_BASE}/${encodeURIComponent(word)}`;
+  // Vercel automatically URL-decodes path parameters
+  // Encode it properly for the dictionary API URL
+  const targetUrl = `${DICTIONARY_API_BASE}/${encodeURIComponent(wordString)}`;
 
   try {
     const controller = new AbortController();
