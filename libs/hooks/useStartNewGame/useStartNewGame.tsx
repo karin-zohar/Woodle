@@ -1,34 +1,21 @@
 import { useCallback } from "react";
 import useStore from "@/store/store";
-import { fetchRandomWord } from "@/api/randomWordApi";
+import { getRandomSolution } from "@/services/solution.service";
 import type { WordLength } from "@/store/slices/gameSettings.slice";
 
-const MAX_FETCH_ATTEMPTS = 3;
-
-const isValidSolution = (solution: string, wordLength: WordLength): boolean =>
-  typeof solution === "string" &&
-  solution.trim().toLowerCase().length === wordLength;
-
 const fetchSolutionForLength = async (wordLength: WordLength) => {
-  let lastError: unknown;
-  for (let attempt = 1; attempt <= MAX_FETCH_ATTEMPTS; attempt++) {
-    try {
-      const { solution, definition } = await fetchRandomWord(wordLength);
-      if (isValidSolution(solution, wordLength)) {
-        const trimmed = solution.trim().toLowerCase();
-        return { wordLength, solution: trimmed, definition: definition ?? null };
-      }
-    } catch (err) {
-      lastError = err;
-    }
-  }
-  throw lastError ?? new Error("Failed to get a valid solution");
+  const { solution, definition } = await getRandomSolution(wordLength);
+  const trimmed = solution.trim().toLowerCase();
+  return { wordLength, solution: trimmed, definition: definition ?? null };
 };
 
-/**
- * Hook to start a new game: fetches a solution for the given word length, then applies it to the store (and localStorage).
- * Uses store.isFetchingSolution so isPending is shared and prevents double-fetch (e.g. React Strict Mode).
+
+/*
+ * Hook to start a new game: chooses a solution from the local word list and fetches its definition,
+ * then applies it to the store and localStorage.
+ * Uses store.isFetchingSolution to prevent concurrent fetches and share loading state across components.
  */
+
 export const useStartNewGame = () => {
   const applyNewGame = useStore((state) => state.applyNewGame);
   const isFetchingSolution = useStore((state) => state.isFetchingSolution);

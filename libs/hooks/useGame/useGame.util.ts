@@ -87,10 +87,10 @@ export const checkGameStatus = (
   }
 };
 
-/**
- * Dispatches an optional game event, marks the current guess as invalid,
- * then clears the invalid state after a short delay.
- */
+
+// Dispatches an optional game event, marks the current guess as invalid,
+// then clears the invalid state after a short delay.
+
 export const showInvalidGuessAndClear = (
   setCurrentGuess: SetCurrentGuess,
   eventName?: string
@@ -104,10 +104,9 @@ export const showInvalidGuessAndClear = (
   }, INVALID_GUESS_RESET_MS);
 };
 
-/**
- * Checks if the guess is a real word via API. If so, adds it to the allowed list
- * and submits. Otherwise calls onNotInList (e.g. show "not in word list").
- */
+
+// Checks if the guess is a real word via API. If so, adds it to the allowed list
+// and submits. Otherwise calls onNotInList (e.g. show "not in word list").
 export const tryAddWordAndSubmit = (
   guess: string,
   wordLength: WordLength,
@@ -138,9 +137,7 @@ export const tryAddWordAndSubmit = (
     });
 };
 
-/**
- * Builds the board rows from guesses, current typing row, solution, and word length.
- */
+
 export const buildBoard = (
   guesses: string[],
   currentGuess: CurrentGuessState,

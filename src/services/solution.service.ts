@@ -3,11 +3,11 @@ import type { WordLength } from "@/store/slices/gameSettings.slice";
 import { checkWordIsRealAndGetDefinition } from "@/api/wordCheckApi";
 
 /**
- * Fetches a random solution word of the given length from the local allowed-words list,
- * and its definition from the Free Dictionary API.
+ * Selects a random solution word of the given length from the local allowed-words list,
+ * and fetches its definition from the Free Dictionary API.
  * Uses the dictionary API only for the definition of the chosen word.
  */
-export const fetchRandomWord = async (
+export const getRandomSolution = async (
   length: WordLength
 ): Promise<{ solution: string; definition: string | null }> => {
   const validWords = getValidSolutionWords(length);

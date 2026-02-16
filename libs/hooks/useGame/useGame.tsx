@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocalStorage } from "react-use";
 import type { CurrentGuessState, UseGameReturn } from "./useGame.type";
+import { useLocalStorage } from "react-use";
 import {
   buildBoard,
   checkGameStatus,
