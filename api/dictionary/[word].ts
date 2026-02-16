@@ -56,7 +56,18 @@ export default async function handler(
 
     // If the response is OK, forward the JSON data
     if (response.ok) {
-      const data = await response.json();
+      // Read the response body as text first to ensure we capture everything
+      const responseText = await response.text();
+      
+      // Parse and validate the JSON
+      let data: unknown;
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        // If parsing fails, return error response
+        return res.status(500).json({ error: 'Invalid response from dictionary API' });
+      }
+      
       // Ensure Content-Type is set before sending response
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       // Forward the exact response from dictionary API

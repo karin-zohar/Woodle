@@ -13,18 +13,26 @@ const isProduction = (): boolean => {
   // Check if we're on a Vercel deployment
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
-    // Vercel deployments use vercel.app domain
-    // Custom domains on Vercel will also have the /api routes available
-    // Only use Vercel function if we're definitely on Vercel or a production domain
-    return (
-      hostname.includes('vercel.app') ||
-      hostname.includes('vercel.com') ||
-      // For custom domains, check if we're NOT on localhost/local IP
-      (hostname !== 'localhost' &&
-        hostname !== '127.0.0.1' &&
+    const protocol = window.location.protocol;
+    
+    // Always use Vercel function if we're on HTTPS and not localhost
+    // This covers Vercel deployments (vercel.app) and custom domains
+    if (protocol === 'https:' && hostname !== 'localhost' && hostname !== '127.0.0.1') {
+      // Exclude local IP ranges
+      if (
         !hostname.startsWith('192.168.') &&
         !hostname.startsWith('10.') &&
-        !hostname.startsWith('172.'))
+        !hostname.startsWith('172.') &&
+        hostname !== '0.0.0.0'
+      ) {
+        return true;
+      }
+    }
+    
+    // Also check for explicit Vercel domains
+    return (
+      hostname.includes('vercel.app') ||
+      hostname.includes('vercel.com')
     );
   }
   // If window is undefined (SSR), assume development
