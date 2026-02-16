@@ -56,22 +56,14 @@ export default async function handler(
 
     // If the response is OK, forward the JSON data
     if (response.ok) {
-      // Read the response body as text first to ensure we capture everything
+      // Read the response as text to preserve the exact format
       const responseText = await response.text();
       
-      // Parse and validate the JSON
-      let data: unknown;
-      try {
-        data = JSON.parse(responseText);
-      } catch {
-        // If parsing fails, return error response
-        return res.status(500).json({ error: 'Invalid response from dictionary API' });
-      }
-      
-      // Ensure Content-Type is set before sending response
+      // Set Content-Type header explicitly
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
-      // Forward the exact response from dictionary API
-      return res.status(response.status).json(data);
+      
+      // Send the response text directly (it's already valid JSON)
+      return res.status(response.status).send(responseText);
     } else {
       // For non-OK responses (like 404), return empty body with the status code
       return res.status(response.status).end();
