@@ -33,6 +33,7 @@ export const useGame = (): UseGameReturn => {
     `${GUESSES_LOCAL_STORAGE_KEY}-${activeGameId}`,
     []
   );
+  const [prevGameId, setPrevGameId] = useState(activeGameId);
   const [currentGuess, setCurrentGuess] = useState(INITIAL_GUESS_STATE);
   const [isCheckingWord, setIsCheckingWord] = useState(false);
   const isCheckingWordRef = useRef(false);
@@ -40,9 +41,10 @@ export const useGame = (): UseGameReturn => {
   const guessesList = guesses ?? [];
 
   // Reset current guess when switching to a new game.
-  useEffect(() => {
+  if (activeGameId !== prevGameId) {
     setCurrentGuess(INITIAL_GUESS_STATE);
-  }, [activeGameId]);
+    setPrevGameId(activeGameId);
+  }
 
   // Subscribe to game events (not enough letters, not in list, game over, etc.).
   useEffect(() => {
