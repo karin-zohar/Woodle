@@ -16,14 +16,14 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        {/* <AntApp message={{ maxCount: 1 }}> */}
+        <AntApp message={{ maxCount: 1 }}>
           <ToastProvider>
             <ModalRender />
             <MainLayout>
               <AppRoutes />
             </MainLayout>
           </ToastProvider>
-        {/* </AntApp> */}
+        </AntApp>
       </Router>
     </QueryClientProvider>
   );
