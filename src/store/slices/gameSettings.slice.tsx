@@ -21,9 +21,16 @@ export const hasOngoingGame = (settings: GameSettings): boolean => {
   return !!(decoded && decoded.trim() !== "");
 };
 
-/** Returns the decoded solution for gameplay/display; use this instead of settings.solution in UI. */
 export const getDecodedSolution = (settings: GameSettings): string =>
   decode(settings.solution);
+
+export const getDecodedSolutionDefinition = (settings: GameSettings): string | null => {
+  if (!settings.solutionDefinition) {
+    return null;
+  }
+  const decoded = decode(settings.solutionDefinition);
+  return decoded || null;
+};
 
 export type GameSettingsSlice = {
   gameSettings: GameSettings;
@@ -73,10 +80,18 @@ const validateAndNormalizeSettings = (parsed: unknown): GameSettings => {
     ? migratedSettings.wordLength
     : WORD_LENGTHS[0];
 
-  const solutionDefinition =
-    typeof migratedSettings.solutionDefinition === "string" && migratedSettings.solutionDefinition.trim() !== ""
-      ? migratedSettings.solutionDefinition.trim()
-      : null;
+  // Handle solutionDefinition: encode if plain text (migration), keep as-is if already encoded
+  let solutionDefinition: string | null = null;
+  if (typeof migratedSettings.solutionDefinition === "string" && migratedSettings.solutionDefinition.trim() !== "") {
+    const trimmed = migratedSettings.solutionDefinition.trim();
+    // If already encoded (starts with "v2:"), keep it as-is
+    if (trimmed.startsWith("v2:")) {
+      solutionDefinition = trimmed;
+    } else {
+      // Plain text (old format), encode it for migration
+      solutionDefinition = encode(trimmed);
+    }
+  }
 
   return {
     wordLength: wordLength as WordLength,
@@ -100,9 +115,17 @@ const loadGameSettings = (): GameSettings => {
 
   try {
     const parsed = JSON.parse(storedSettings);
+    const originalSolutionDefinition = (parsed as Partial<GameSettings>).solutionDefinition;
     const settings = validateAndNormalizeSettings(parsed);
 
-    if (!(parsed as Partial<GameSettings>).activeGameId) {
+    // Save if activeGameId was missing (migration) or if solutionDefinition was migrated (plain text -> encoded)
+    const needsMigration =
+      !(parsed as Partial<GameSettings>).activeGameId ||
+      (typeof originalSolutionDefinition === "string" &&
+        originalSolutionDefinition.trim() !== "" &&
+        !originalSolutionDefinition.trim().startsWith("v2:"));
+    
+    if (needsMigration) {
       try {
         saveSettings(settings);
       } catch (error) {
@@ -163,13 +186,16 @@ export const gameSettingsSlice: StateCreator<GameSettingsSlice> = (set) => {
       }
       const solutionDefinition =
         typeof definition === "string" && definition.trim() !== "" ? definition.trim() : null;
+      const encodedSolutionDefinition = solutionDefinition
+        ? (encode(solutionDefinition) || null)
+        : null;
       set((state) => {
         const oldGameId = state.gameSettings.activeGameId;
         const newGameId = Date.now().toString();
         const newSettings: GameSettings = {
           wordLength,
           solution: encodedSolution,
-          solutionDefinition,
+          solutionDefinition: encodedSolutionDefinition,
           activeGameId: newGameId,
         };
         saveSettings(newSettings);

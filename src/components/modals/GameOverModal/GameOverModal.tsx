@@ -1,7 +1,7 @@
 import { useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import useStore from "@/store/store";
-import { getDecodedSolution } from "@/store/slices/gameSettings.slice";
+import { getDecodedSolution, getDecodedSolutionDefinition } from "@/store/slices/gameSettings.slice";
 import { useModal, useStartNewGame, useToast } from "@/libs/hooks";
 import { Button, Flex } from "antd";
 
@@ -14,7 +14,7 @@ const GameOverModal = () => {
   const { showToast } = useToast();
   const { gameSettings } = useStore();
   const solution = useStore((state) => getDecodedSolution(state.gameSettings));
-  const solutionDefinition = useStore((state) => state.gameSettings.solutionDefinition);
+  const solutionDefinition = useStore((state) => getDecodedSolutionDefinition(state.gameSettings));
   const { startNewGame, isPending } = useStartNewGame();
 
   const solutionRef = useRef<string | null>(null);
