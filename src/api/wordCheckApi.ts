@@ -69,14 +69,44 @@ export const checkWordIsRealAndGetDefinition = async (
     if (!response.ok) {
       return { isReal: false, definition: null };
     }
+    
+    // Check Content-Type to ensure we're getting JSON
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      console.warn("Dictionary API response is not JSON:", contentType);
+      return { isReal: true, definition: null };
+    }
+    
     const data = (await response.json()) as DictionaryEntry[] | undefined;
-    const definition = data?.[0]?.meanings?.[0]?.definitions?.[0]?.definition;
+    
+    // Validate data structure
+    if (!Array.isArray(data) || data.length === 0) {
+      console.warn("Dictionary API returned unexpected data structure:", data);
+      return { isReal: true, definition: null };
+    }
+    
+    // Extract definition with validation
+    const entry = data[0];
+    const meanings = entry?.meanings;
+    if (!meanings || !Array.isArray(meanings) || meanings.length === 0) {
+      console.warn("Dictionary entry has no meanings:", entry);
+      return { isReal: true, definition: null };
+    }
+    
+    const definitions = meanings[0]?.definitions;
+    if (!definitions || !Array.isArray(definitions) || definitions.length === 0) {
+      console.warn("Dictionary meaning has no definitions:", meanings[0]);
+      return { isReal: true, definition: null };
+    }
+    
+    const definition = definitions[0]?.definition;
     const trimmed = typeof definition === "string" ? definition.trim() : "";
     return {
       isReal: true,
       definition: trimmed || null,
     };
-  } catch {
+  } catch (error) {
+    console.error("Error fetching word definition:", error);
     return { isReal: false, definition: null };
   } finally {
     clearTimeout(timeoutId);

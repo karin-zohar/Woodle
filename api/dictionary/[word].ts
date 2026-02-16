@@ -54,16 +54,16 @@ export default async function handler(
 
     clearTimeout(timeoutId);
 
-    // Forward the status code
-    res.status(response.status);
-
     // If the response is OK, forward the JSON data
     if (response.ok) {
       const data = await response.json();
-      return res.json(data);
+      // Ensure Content-Type is set before sending response
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      // Forward the exact response from dictionary API
+      return res.status(response.status).json(data);
     } else {
       // For non-OK responses (like 404), return empty body with the status code
-      return res.end();
+      return res.status(response.status).end();
     }
   } catch (error) {
     // Handle network errors, timeouts, etc.
