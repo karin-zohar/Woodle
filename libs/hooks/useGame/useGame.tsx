@@ -1,35 +1,50 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { CurrentGuessState, UseGameReturn } from "./useGame.type";
 import { useLocalStorage } from "react-use";
-import { TILE_STATUS , type UseGameReturn } from "./useGame.type";
-import { calculateRowStatus, getKeyboardAction, checkGameStatus } from "./useGame.util";
+import {
+  buildBoard,
+  checkGameStatus,
+  getKeyboardAction,
+  showInvalidGuessAndClear,
+  tryAddWordAndSubmit,
+} from "./useGame.util";
 import { SUBMIT_HANDLERS } from "./useGame.handlers";
 import useStore from "@/store/store";
 import { useToast, useModal } from "../index";
-import dispatchCustomEvent from "@/libs/helpers/dispatchCustomEvent";
 import { GAME_EVENTS } from "@/libs/constants/gameEvents";
-import { GUESSES_LOCAL_STORAGE_KEY } from "@/store/slices/gameSettings.slice";
+import {
+  getDecodedSolution,
+  GUESSES_LOCAL_STORAGE_KEY,
+} from "@/store/slices/gameSettings.slice";
+
+const INITIAL_GUESS_STATE: CurrentGuessState = {
+  guess: "",
+  isInvalid: false,
+};
 
 export const useGame = (): UseGameReturn => {
   const { showToast } = useToast();
   const { patchModalParams } = useModal();
   const activeGameId = useStore((state) => state.gameSettings.activeGameId);
   const gameSettings = useStore((state) => state.gameSettings);
+  const solution = useStore((state) => getDecodedSolution(state.gameSettings));
 
   const [guesses, setGuesses] = useLocalStorage<string[]>(
     `${GUESSES_LOCAL_STORAGE_KEY}-${activeGameId}`,
     []
   );
-  
-  const [currentGuess, setCurrentGuess] = useState<{ guess: string; isInvalid: boolean }>({
-    guess: "",
-    isInvalid: false,
-  });
+  const [currentGuess, setCurrentGuess] = useState(INITIAL_GUESS_STATE);
+  const [isCheckingWord, setIsCheckingWord] = useState(false);
+  const isCheckingWordRef = useRef(false);
 
-  // Reset guess state when activeGameId changes (new game).
+  const guessesList = guesses ?? [];
+
+  // Reset current guess when switching to a new game.
   useEffect(() => {
-    setCurrentGuess({ guess: "", isInvalid: false });
+    setCurrentGuess(INITIAL_GUESS_STATE);
   }, [activeGameId]);
 
+  // Subscribe to game events (not enough letters, not in list, game over, etc.).
   useEffect(() => {
     const listeners = Object.entries(SUBMIT_HANDLERS).map(([eventName, handler]) => {
       const listener = (event: Event) =>
@@ -37,7 +52,6 @@ export const useGame = (): UseGameReturn => {
       window.addEventListener(eventName, listener);
       return { eventName, listener };
     });
-
     return () => {
       listeners.forEach(({ eventName, listener }) => {
         window.removeEventListener(eventName, listener);
@@ -45,54 +59,43 @@ export const useGame = (): UseGameReturn => {
     };
   }, [showToast, patchModalParams]);
 
-  const board = useMemo(() => {
-    const guessesArray = guesses || [];
-    return Array.from({ length: gameSettings.wordLength + 1 }).map(
-      (_, rowIndex) => {
-        const word =
-          guessesArray[rowIndex] ||
-          (rowIndex === guessesArray.length ? currentGuess.guess : "");
+  const board = useMemo(
+    () =>
+      buildBoard(
+        guesses ?? [],
+        currentGuess,
+        solution,
+        gameSettings.wordLength
+      ),
+    [guesses, currentGuess, solution, gameSettings.wordLength]
+  );
 
-        const isFinished = rowIndex < guessesArray.length;
-
-        const rowStatuses = isFinished
-          ? calculateRowStatus(word, gameSettings.solution)
-          : [];
-
-        return {
-          isInvalid: rowIndex === guessesArray.length && currentGuess.isInvalid,
-          isWin: isFinished && word === gameSettings.solution,
-          tiles: word
-            .padEnd(gameSettings.wordLength, " ")
-            .split("")
-            .map((char, charIndex) => ({
-              content: char.trim(),
-              status: isFinished ? rowStatuses[charIndex] : TILE_STATUS.EDITING,
-            })),
-        };
+  const submitGuess = useCallback(
+    (overrideGuess?: string) => {
+      const guessToSubmit = overrideGuess ?? currentGuess.guess;
+      if (guessToSubmit.length !== gameSettings.wordLength) {
+        return;
       }
-    );
-  }, [guesses, currentGuess, gameSettings.solution, gameSettings.wordLength]);
-
-  const submitGuess = useCallback(() => {
-    if (currentGuess.guess.length === gameSettings.wordLength) {
-      const guess = currentGuess.guess;
-      const nextLength = (guesses?.length || 0) + 1;
-      setGuesses([...(guesses || []), guess]);
-      checkGameStatus(guess, gameSettings.solution, gameSettings.wordLength, nextLength);
-      setCurrentGuess({ guess: "", isInvalid: false });
-    }
-  }, [
-    currentGuess,
-    gameSettings.solution,
-    gameSettings.wordLength,
-    guesses,
-    setGuesses,
-    setCurrentGuess,
-  ]);
+      const nextLength = guessesList.length + 1;
+      setGuesses([...guessesList, guessToSubmit]);
+      checkGameStatus(guessToSubmit, solution, gameSettings.wordLength, nextLength);
+      setCurrentGuess(INITIAL_GUESS_STATE);
+    },
+    [
+      currentGuess.guess,
+      solution,
+      gameSettings.wordLength,
+      guessesList,
+      setGuesses,
+      setCurrentGuess,
+    ]
+  );
 
   const onType = useCallback(
     (key: string) => {
+      if (isCheckingWord) {
+        return;
+      }
       if (key === "Backspace") {
         setCurrentGuess((prev) => ({ ...prev, guess: prev.guess.slice(0, -1) }));
         return;
@@ -105,35 +108,55 @@ export const useGame = (): UseGameReturn => {
       );
 
       switch (result.action) {
-        case "SUBMIT":
+        case "SUBMIT": {
           if (result.isValid) {
             submitGuess();
-          } else {
-            dispatchCustomEvent(result.invalidReason ?? GAME_EVENTS.SUBMIT_UNKNOWN_ERROR);
-            setCurrentGuess((prev) => ({ ...prev, isInvalid: true }));
-            setTimeout(() => setCurrentGuess((prev) => ({ ...prev, isInvalid: false })), 600);
+            break;
           }
+          if (result.invalidReason === GAME_EVENTS.SUBMIT_NOT_IN_WORD_LIST) {
+            const guess = currentGuess.guess.trim().toLowerCase();
+            tryAddWordAndSubmit(guess, gameSettings.wordLength, submitGuess, {
+              setCurrentGuess,
+              isCheckingWordRef,
+              setIsCheckingWord,
+              onNotInList: () =>
+                showInvalidGuessAndClear(
+                  setCurrentGuess,
+                  GAME_EVENTS.SUBMIT_NOT_IN_WORD_LIST
+                ),
+            });
+            break;
+          }
+          showInvalidGuessAndClear(
+            setCurrentGuess,
+            result.invalidReason ?? GAME_EVENTS.SUBMIT_UNKNOWN_ERROR
+          );
           break;
+        }
 
         case "TYPE":
           if (result.isValid) {
-            setCurrentGuess((prev) => ({ ...prev, guess: prev.guess + key.toLowerCase() }));
+            setCurrentGuess((prev) => ({
+              ...prev,
+              guess: prev.guess + key.toLowerCase(),
+            }));
           }
           break;
 
         default:
-          // Ignore other keys like 'Shift', 'Alt', etc.
           break;
       }
     },
-    [currentGuess, gameSettings.wordLength, submitGuess, guesses?.length]
+    [currentGuess, gameSettings.wordLength, submitGuess, isCheckingWord]
   );
 
   return {
     board,
-    guesses: guesses || [],
+    guesses: guessesList,
+    currentRowIndex: guessesList.length,
     submitGuess,
     onType,
     currentGuess,
+    isCheckingWord,
   };
 };

@@ -1,5 +1,8 @@
 # Code Review Checklist
 
+- [ ] **Curly braces (conditionals/loops)**: Every `if`, `else`, `for`, `while`, and `do...while` uses `{}` even for single statements (see [curly-braces-conditionals](.cursor/rules/curly-braces-conditionals.mdc)).
+- [ ] **Styling**: If a component has a style file (e.g. `*.style.css`), all styling lives there; avoid inline styles unless absolutely necessary.
+- [ ] **Avoid loops**: Prefer array methods (`map`, `filter`, `reduce`, `forEach`, etc.) over `for`/`while` loops when iterating over arrays.
 - [ ] **Coding principles**: Follows project conventions; single responsibility; clear separation of concerns.
 - [ ] **Naming conventions**: Variables, functions, components, and files named consistently and descriptively (see [STANDARDS.md](STANDARDS.md)).
 - [ ] **Readability**: Code is easy to follow; complex logic is explained or simplified; formatting consistent.

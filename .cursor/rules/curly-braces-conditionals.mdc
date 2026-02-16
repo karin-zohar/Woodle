@@ -1,0 +1,69 @@
+---
+description: Condition blocks and arrow functions must use curly brackets even for single statements
+globs: "**/*.{js,ts,tsx}"
+alwaysApply: false
+---
+
+# Curly Brackets in Condition Blocks and Arrow Functions
+
+Always use curly brackets `{}` in condition blocks, loop blocks, and arrow function bodies, even when the block contains only one statement. This applies to `if`, `else`, `for`, `while`, `do...while`, and arrow functions (`=>`).
+
+## Condition and loop blocks
+
+```javascript
+// ❌ BAD – single statement without braces
+if (num > 5) return;
+if (num > 5)
+  return;
+for (let i = 0; i < n; i++) doSomething(i);
+
+// ✅ GOOD – braces always used
+if (num > 5) {
+  return;
+}
+if (num > 5) {
+  return;
+}
+for (let i = 0; i < n; i++) {
+  doSomething(i);
+}
+```
+
+```javascript
+// ❌ BAD – else without braces
+if (ok) doA();
+else doB();
+
+// ✅ GOOD
+if (ok) {
+  doA();
+} else {
+  doB();
+}
+```
+
+## Arrow functions
+
+```javascript
+// ❌ BAD – implicit return, no braces
+const startNewGame = (wordLength: WordLength) =>
+  mutation.mutateAsync(wordLength);
+
+const double = (x) => x * 2;
+
+// ✅ GOOD – braces and explicit return
+const startNewGame = (wordLength: WordLength) => {
+  return mutation.mutateAsync(wordLength);
+};
+
+const double = (x) => {
+  return x * 2;
+};
+```
+
+## Why
+
+- Reduces risk of bugs when adding a second statement later.
+- Keeps style consistent and easier to read.
+- Avoids ambiguity with nested conditions.
+- For arrow functions: makes return behavior explicit and keeps bodies consistent.

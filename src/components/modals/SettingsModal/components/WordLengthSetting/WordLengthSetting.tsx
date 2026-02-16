@@ -2,25 +2,32 @@ import { Flex, type CheckboxOptionType, type RadioChangeEvent } from "antd";
 import GenRadioGroup from "@/libs/ui/components/GenRadioGroup/GenRadioGroup";
 import WordLengthSettingOption from "./components/WordLengthSettingOption";
 import useStore from "@/store/store";
-import { useModal, useConfirmAction } from "@/libs/hooks";
-
-const VALID_WORD_LENGTHS = [5, 6, 7];
+import { WORD_LENGTHS, type WordLength } from "@/store/slices/gameSettings.slice";
+import { useModal, useConfirmAction, useStartNewGame, useToast } from "@/libs/hooks";
 
 const WordLengthSetting = () => {
-  const { gameSettings, startNewGame } = useStore();
+  const wordLength = useStore((state) => state.gameSettings.wordLength);
+  const setWordLength = useStore((state) => state.setWordLength);
   const { openModal } = useModal();
+  const { showToast } = useToast();
+  const { startNewGame } = useStartNewGame();
   const { confirm } = useConfirmAction({ eventName: "CONFIRM_END_GAME" });
 
   const handleChange = (e: RadioChangeEvent) => {
-    const nextValue = e.target.value;
+    const nextValue = e.target.value as WordLength;
     confirm(() => {
-      startNewGame(nextValue);
+      const prev = useStore.getState().gameSettings.wordLength;
+      setWordLength(nextValue);
+      startNewGame(nextValue).catch(() => {
+        setWordLength(prev);
+        showToast("error", "Failed to start new game. Please try again.");
+      });
     });
 
     openModal("end-game");
   };
 
-  const wordLengthOptions: CheckboxOptionType[] = VALID_WORD_LENGTHS.map(
+  const wordLengthOptions: CheckboxOptionType[] = WORD_LENGTHS.map(
     (length) => ({
       label: <WordLengthSettingOption value={length} />,
       value: length,
@@ -31,7 +38,8 @@ const WordLengthSetting = () => {
     <Flex className="setting setting-word-length" gap={10} vertical>
       <span>Word Length</span>
       <GenRadioGroup
-        value={gameSettings.wordLength}
+        key={wordLength}
+        value={wordLength}
         options={wordLengthOptions}
         onChange={handleChange}
       />

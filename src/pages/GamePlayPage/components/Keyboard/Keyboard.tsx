@@ -12,6 +12,7 @@ import {
 type KeyboardProps = {
   onType: (key: string) => void;
   board: TileRowType[];
+  disabled?: boolean;
 };
 
 const KEYBOARD_ROWS = [
@@ -22,23 +23,28 @@ const KEYBOARD_ROWS = [
 
 const SYSTEM_KEYS = ["enter", "backspace"];
 
-const Keyboard: FC<KeyboardProps> = ({ onType, board }) => {
+const Keyboard: FC<KeyboardProps> = ({ onType, board, disabled = false }) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
+      if (disabled) {
+        return;
+      }
       onType(event.key);
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onType]);
+  }, [onType, disabled]);
 
   const keyStatusMap = useMemo(() => {
     const statusMap: Record<string, TileStatusValue> = {};
 
     board.forEach((row) => {
       row.tiles.forEach((tile) => {
-        if (!tile.content) return;
+        if (!tile.content) {
+          return;
+        }
         const char = tile.content.toLowerCase();
         const currentStatus = statusMap[char];
 
@@ -76,6 +82,7 @@ const Keyboard: FC<KeyboardProps> = ({ onType, board }) => {
                 value={keyValue}
                 label={keyValue === "Backspace" ? <BackspaceIcon /> : keyValue}
                 status={status}
+                disabled={disabled}
               />
             );
           })}

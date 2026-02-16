@@ -93,3 +93,13 @@
     transform: translateY(0);
   }
 }
+
+@keyframes tile-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.96);
+  }
+}

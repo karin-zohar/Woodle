@@ -18,20 +18,36 @@ export type TileRowType = {
   tiles: TileType[];
   isInvalid?: boolean;
   isWin?: boolean;
+  isValidating?: boolean;
 };
 
 export type GameBoardProps = {
   rows: TileRowType[];
+  currentRowIndex: number;
+  isCheckingWord?: boolean;
 };
 
-export type UseGameProps = {};
+export type CurrentGuessState = { guess: string; isInvalid: boolean };
+
+export type SetCurrentGuess = (
+  updater: (prev: CurrentGuessState) => CurrentGuessState
+) => void;
+
+export type TryAddWordAndSubmitOptions = {
+  setCurrentGuess: SetCurrentGuess;
+  isCheckingWordRef: { current: boolean };
+  setIsCheckingWord: (value: boolean) => void;
+  onNotInList: () => void;
+};
 
 export type UseGameReturn = {
   board: TileRowType[];
   guesses: string[];
-  submitGuess: () => void;
+  currentRowIndex: number;
+  submitGuess: (overrideGuess?: string) => void;
   onType: (key: string) => void;
-  currentGuess: { guess: string; isInvalid: boolean };
+  currentGuess: CurrentGuessState;
+  isCheckingWord: boolean;
 };
 
 import { GAME_EVENTS } from '@/libs/constants/gameEvents';

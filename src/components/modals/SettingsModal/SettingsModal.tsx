@@ -4,7 +4,8 @@ import WordLengthSetting from "./components/WordLengthSetting/WordLengthSetting"
 import "./settings-modal.style.css";
 
 const SettingsModal = () => {
-  const { theme, setTheme } = useStore();
+  const theme = useStore((state) => state.theme);
+  const setTheme = useStore((state) => state.setTheme);
 
   const onChangeTheme = (checked: boolean) => {
     setTheme(checked ? "light" : "dark");

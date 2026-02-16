@@ -1,0 +1,47 @@
+---
+description: Always use arrow functions in JavaScript/TypeScript
+globs: "**/*.{js,ts,tsx}"
+alwaysApply: false
+---
+
+# Use Arrow Functions
+
+Prefer arrow functions over `function` declarations and expressions in JavaScript/TypeScript.
+
+## When writing new code
+
+- Use arrow functions for function expressions, callbacks, and methods where `this` binding is not required.
+- Use arrow functions for React event handlers and hook callbacks unless you need a named function for recursion or debugging.
+
+## Examples
+
+```javascript
+// ❌ BAD – function keyword
+function double(x) {
+  return x * 2;
+}
+const handler = function (e) {
+  console.log(e);
+};
+
+// ✅ GOOD – arrow functions
+const double = (x) => x * 2;
+const handler = (e) => {
+  console.log(e);
+};
+```
+
+```typescript
+// ❌ BAD – function in array methods
+items.map(function (item) {
+  return item.id;
+});
+
+// ✅ GOOD – arrow function
+items.map((item) => item.id);
+```
+
+## Exceptions
+
+- Use a regular `function` when you need its own `this` (e.g. object methods that use `this`, or when the function is used as a constructor).
+- Use a regular `function` when you need a named function for recursion or clearer stack traces, if the team prefers it for that case.
